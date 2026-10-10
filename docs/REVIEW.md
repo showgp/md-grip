@@ -1,4 +1,4 @@
-# GoGrip macOS App — Code Review 报告 (Round 3)
+# MDGrip macOS App — Code Review 报告 (Round 3)
 
 > 审查日期: 2026-06-03
 > 审查范围: Round 2 修复验证 + 最终全量检查
@@ -99,24 +99,24 @@ Go 侧（Phase 1）
 └── Makefile                       # 新建
 
 Swift 侧（Phase 2-9）
-├── macos/GoGrip.xcodeproj/        # xcodegen 生成
-├── macos/GoGrip/GoGripApp.swift
-├── macos/GoGrip/AppDelegate.swift
-├── macos/GoGrip/Info.plist        # 含 LSUIElement
-├── macos/GoGrip/Models/HistoryEntry.swift
-├── macos/GoGrip/Services/ProcessManager.swift
-├── macos/GoGrip/Utilities/Storage.swift
-├── macos/GoGrip/Views/PopoverView.swift
-├── macos/GoGrip/Views/DropOverlayView.swift
-├── macos/GoGrip/Views/HistoryListView.swift
-├── macos/GoGrip/Views/HistoryRowView.swift
-└── macos/GoGrip/Views/SettingsView.swift
+├── macos/MDGrip.xcodeproj/        # xcodegen 生成
+├── macos/MDGrip/MDGripApp.swift
+├── macos/MDGrip/AppDelegate.swift
+├── macos/MDGrip/Info.plist        # 含 LSUIElement
+├── macos/MDGrip/Models/HistoryEntry.swift
+├── macos/MDGrip/Services/ProcessManager.swift
+├── macos/MDGrip/Utilities/Storage.swift
+├── macos/MDGrip/Views/PopoverView.swift
+├── macos/MDGrip/Views/DropOverlayView.swift
+├── macos/MDGrip/Views/HistoryListView.swift
+├── macos/MDGrip/Views/HistoryRowView.swift
+└── macos/MDGrip/Views/SettingsView.swift
 
 测试（Phase 11）
-├── macos/GoGripTests/StorageTests.swift
-├── macos/GoGripTests/ProcessManagerTests.swift
-├── macos/GoGripTests/PortReaderTests.swift
-└── macos/GoGripTests/IntegrationTests.swift
+├── macos/MDGripTests/StorageTests.swift
+├── macos/MDGripTests/ProcessManagerTests.swift
+├── macos/MDGripTests/PortReaderTests.swift
+└── macos/MDGripTests/IntegrationTests.swift
 
 CI/CD（Phase 10）
 ├── .github/workflows/build.yml    # +14 行

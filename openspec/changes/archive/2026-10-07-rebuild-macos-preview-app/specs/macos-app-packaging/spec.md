@@ -11,7 +11,7 @@
 打包流程 SHALL 生成支持 macOS 13 及以上系统、Apple Silicon 和 Intel 的 universal App，并随 App 提供能在对应架构运行的 Go 渲染工具。用户使用候选 App SHALL 不需要安装 Go、单独安装 CLI、配置 PATH 或保留源码目录；宿主与内置工具 SHALL 能在所声明的系统和架构上共同提供完整预览功能。
 
 #### Scenario: Use the application without development tools
-- **WHEN** 用户运行本阶段打包生成的 App，环境中没有 Go 开发工具或额外安装的 go-grip CLI，也未配置其 PATH
+- **WHEN** 用户运行本阶段打包生成的 App，环境中没有 Go 开发工具或额外安装的 md-grip CLI，也未配置其 PATH
 - **THEN** App 使用随包提供的工具完成 Finder 或手动打开的目标预览，不要求从源码目录寻找二进制文件
 
 #### Scenario: Use the same candidate on supported architectures

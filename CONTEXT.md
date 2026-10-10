@@ -1,15 +1,15 @@
-# GoGrip
+# MDGrip
 
-GoGrip previews local Markdown through a browser and provides macOS entry points for opening and managing previews.
+MDGrip previews local Markdown through a browser and provides macOS entry points for opening and managing previews.
 
 ## Language
 
 **Open Target**:
-A local Markdown file or directory that the user asks GoGrip to preview. A symbolic link and its resolved destination identify the same Open Target.
+A local Markdown file or directory that the user asks MDGrip to preview. A symbolic link and its resolved destination identify the same Open Target.
 _Avoid_: Path, item, document
 
 **Finder Command**:
-The Finder action that asks GoGrip to open one selected Open Target.
+The Finder action that asks MDGrip to open one selected Open Target.
 _Avoid_: Finder extension, right-click handler
 
 **Preview Session**:

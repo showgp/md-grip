@@ -35,14 +35,14 @@ Proposal source: ../proposal.md
 
 | 当前表面 | 本票需要的交付与切换边界 |
 |---|---|
-| `macos/GoGrip/Services/ProcessManager.swift`：原始路径字典、独立 `--json`、丢弃 stderr、EOF/超时回退 6419、仅 terminate/interrupt | 新生产进程适配器不复用这些成功判定或所有权逻辑；单次 launch 接收目标及其目录/文件类别和 generation，拥有该 Process/管道并报告事件，不负责身份去重、批次、历史或会话列表。旧宿主/管理器整体切换在 05；不为新适配器添加旧 port API、转发别名或兼容解析。 |
+| `macos/MDGrip/Services/ProcessManager.swift`：原始路径字典、独立 `--json`、丢弃 stderr、EOF/超时回退 6419、仅 terminate/interrupt | 新生产进程适配器不复用这些成功判定或所有权逻辑；单次 launch 接收目标及其目录/文件类别和 generation，拥有该 Process/管道并报告事件，不负责身份去重、批次、历史或会话列表。旧宿主/管理器整体切换在 05；不为新适配器添加旧 port API、转发别名或兼容解析。 |
 | `internal/managed.go`、`cmd/root.go`：01、02 已完成的 managed argv、v1 NDJSON、真实 URL、HEAD 与 owner loss | 直接使用 `Process.executableURL` 和 arguments，传 `--managed <generation>`、目录的 `-r` 和目标前的 `--`，不经 shell、不传独立 `--json`/端口/导出组合、不让 Go 请求浏览器；不重新定义 Go wire shape 或引入测试专用 CLI flags。 |
 | Foundation `Process`/`Pipe` launch 与退出 | 每 child 独立 ownership stdin Pipe；串行建立 descriptor 和 launch，在 launch 前设置并检查非 stdio 端 `FD_CLOEXEC`，尤其 writer；将 Pipe 本身交给 `standardInput`，不复制 writer、不传给其他进程。进程/管道 I/O 与 HEAD 不阻塞主线程；launch 失败和后续启动失败都释放本次通道。 |
 | stdout 与 stderr 消费 | 连续解析 UTF-8 NDJSON 的分片/多行，完整行及时消费，跨读取残余和诊断留存各有 64 KiB 上限；ready 后仍消费 reload/target/fatal/退出，不因停止读取而阻塞 Go。机器反馈校验 version/generation/必要字段；stderr 保留可获得诊断但不参与机器状态判断。 |
-| 启动结果及退出回调 | 成功创建子进程后 15 秒覆盖反馈和一次 HEAD；只有匹配的 ready、HTTP 回环 URL、same-origin HEAD 204/匹配 `X-GoGrip-Generation` 及进程仍存活才成功。失败不 fallback；所有反馈/超时/退出结果携带本次代次，协调器的旧代次隔离及会话阶段留给 04。 |
-| `macos/GoGripTests/PortReaderTests.swift`、`ProcessManagerTests.swift`、`IntegrationTests.swift` | 旧 EOF/timeout→6419、混日志找 port、mock shell echo 或仅进程存在不能成为新契约或 smoke 证据。移除与本票切换冲突的旧断言，不重钉；复用适用行为覆盖，更新真正受影响的调用。其余旧宿主测试随各自切换处理，不以本票清理无关代码。 |
-| `macos/GoGrip.xcodeproj/project.pbxproj`：当前仅宿主与 FinderSync target；`GoGripTests/` 文件未配置为测试 target | 为本票源码编译及批准 seams 的行为回归落实最小可执行构建/测试入口，使用已提交工程作为工程来源，不假称现有 `xcodebuild test` 已能运行这些文件、不增加第二份 generator 配置。FinderSync/旧宿主整体去除及工程切换仍属 05。 |
-| `macos/Scripts/build-go-grip.sh` 当前输出 Resources；旧管理器会 runtime chmod；`AppDelegate.swift` 用 port 拼 URL | 本票生产适配器只接受确定的 `Contents/MacOS/go-grip` 路线，不增加 Resources/PATH/源码回退或 runtime chmod；真实集成可将本次构建 Go 放入隔离临时 bundle 并调用同一生产适配器。正式开发宿主嵌入、浏览器与 AppDelegate 切换由 05 完成，不要求先实施 05 或 10 才能验证本票。 |
+| 启动结果及退出回调 | 成功创建子进程后 15 秒覆盖反馈和一次 HEAD；只有匹配的 ready、HTTP 回环 URL、same-origin HEAD 204/匹配 `X-MDGrip-Generation` 及进程仍存活才成功。失败不 fallback；所有反馈/超时/退出结果携带本次代次，协调器的旧代次隔离及会话阶段留给 04。 |
+| `macos/MDGripTests/PortReaderTests.swift`、`ProcessManagerTests.swift`、`IntegrationTests.swift` | 旧 EOF/timeout→6419、混日志找 port、mock shell echo 或仅进程存在不能成为新契约或 smoke 证据。移除与本票切换冲突的旧断言，不重钉；复用适用行为覆盖，更新真正受影响的调用。其余旧宿主测试随各自切换处理，不以本票清理无关代码。 |
+| `macos/MDGrip.xcodeproj/project.pbxproj`：当前仅宿主与 FinderSync target；`MDGripTests/` 文件未配置为测试 target | 为本票源码编译及批准 seams 的行为回归落实最小可执行构建/测试入口，使用已提交工程作为工程来源，不假称现有 `xcodebuild test` 已能运行这些文件、不增加第二份 generator 配置。FinderSync/旧宿主整体去除及工程切换仍属 05。 |
+| `macos/Scripts/build-md-grip.sh` 当前输出 Resources；旧管理器会 runtime chmod；`AppDelegate.swift` 用 port 拼 URL | 本票生产适配器只接受确定的 `Contents/MacOS/md-grip` 路线，不增加 Resources/PATH/源码回退或 runtime chmod；真实集成可将本次构建 Go 放入隔离临时 bundle 并调用同一生产适配器。正式开发宿主嵌入、浏览器与 AppDelegate 切换由 05 完成，不要求先实施 05 或 10 才能验证本票。 |
 | `docs/ARCHITECTURE.md` | 随实际证据更新宿主协议、缓冲/期限、descriptor 所有权、停止及已验证/未验证边界；不将临时 Foundation 宿主视为 Finder/TCC/候选证明。 |
 
 ### Current machine contract
@@ -54,7 +54,7 @@ Proposal source: ../proposal.md
 - `target-status`：嵌套 `target.state`（available/unavailable）及可获得 `target.reason`。
 - `fatal`：可分类 `code`、实际 `message`；保留可获得 stderr 诊断，不从日志猜状态。
 
-验证使用实际 ready URL 的同一 origin 的 `/__gogrip/ready` 做一次 HEAD，检查 204 和代次，不 GET 正文作为 readiness、不接受跳转到其他 origin、不加周期健康轮询。真实内容 GET 仅用于本票 smoke 证明目标身份，不能替代生产 HEAD 路径。
+验证使用实际 ready URL 的同一 origin 的 `/__mdgrip/ready` 做一次 HEAD，检查 204 和代次，不 GET 正文作为 readiness、不接受跳转到其他 origin、不加周期健康轮询。真实内容 GET 仅用于本票 smoke 证明目标身份，不能替代生产 HEAD 路径。
 
 ### Stop and ownership boundary
 
@@ -92,7 +92,7 @@ Proposal source: ../proposal.md
 ## Closure record
 
 - 关闭：2026-10-04，状态 `done`；OpenSpec 任务 2.1、2.5 按实际证据勾选；2.4 保持未勾选（协调器的单个/全部、启动中停止、重复停止与正常/意外退出区分仍属未发布的 04）。
-- 变更面：`macos/GoGrip/Services/ManagedProtocol.swift`（v1 增量解码与字段/嵌套形状/64 KiB 上限校验）、`macos/GoGrip/Services/ManagedProcess.swift`（生产 Foundation 适配器：参数数组、每 child 独立 Pipe 与 FD_CLOEXEC 串行临界区、15s 期限 + 一次 same-origin HEAD、失败清理、停止与 4s 确切 owned SIGKILL 兜底、带代次事件）、`macos/GoGripTests/ManagedProtocolTests.swift`、`ManagedProcessTests.swift`、`ManagedProcessGoIntegrationTests.swift`；工程入口：`macos/GoGrip.xcodeproj/project.pbxproj`（适配器源码进入 app target + 新 GoGripTests logic test target）、`macos/GoGrip.xcodeproj/xcshareddata/xcschemes/GoGrip.xcscheme`（Build/Archive 保持原行为，TestAction 指向 GoGripTests）、`Makefile`（`macos-test`：构建 Go 并复制到系统卷临时 bundle 后运行 xcodebuild test）、`.gitignore`（`macos/.build`）；`docs/ARCHITECTURE.md` 第七节新增 Swift 宿主进程适配器契约与边界；删除 `macos/GoGripTests/PortReaderTests.swift`（旧 EOF/超时→6419 与混日志找 port 断言删除而非重钉）。旧宿主/管理器、FinderSync、`project.yml` 与旧测试文件未动（整体切换属 05）。
+- 变更面：`macos/MDGrip/Services/ManagedProtocol.swift`（v1 增量解码与字段/嵌套形状/64 KiB 上限校验）、`macos/MDGrip/Services/ManagedProcess.swift`（生产 Foundation 适配器：参数数组、每 child 独立 Pipe 与 FD_CLOEXEC 串行临界区、15s 期限 + 一次 same-origin HEAD、失败清理、停止与 4s 确切 owned SIGKILL 兜底、带代次事件）、`macos/MDGripTests/ManagedProtocolTests.swift`、`ManagedProcessTests.swift`、`ManagedProcessGoIntegrationTests.swift`；工程入口：`macos/MDGrip.xcodeproj/project.pbxproj`（适配器源码进入 app target + 新 MDGripTests logic test target）、`macos/MDGrip.xcodeproj/xcshareddata/xcschemes/MDGrip.xcscheme`（Build/Archive 保持原行为，TestAction 指向 MDGripTests）、`Makefile`（`macos-test`：构建 Go 并复制到系统卷临时 bundle 后运行 xcodebuild test）、`.gitignore`（`macos/.build`）；`docs/ARCHITECTURE.md` 第七节新增 Swift 宿主进程适配器契约与边界；删除 `macos/MDGripTests/PortReaderTests.swift`（旧 EOF/超时→6419 与混日志找 port 断言删除而非重钉）。旧宿主/管理器、FinderSync、`project.yml` 与旧测试文件未动（整体切换属 05）。
 - Scoped TDD 证据：S1 解码器以缺失 API 的编译失败为 red，实现后通过；S2/S3 真实 Go 成功路径与受控坏反馈（坏版本/代次、非法 URL、HEAD 失败/跳转、超时、EOF、早退、诊断与残余上限）先红后绿；S4/S5 停止、4s SIGKILL 兜底、双会话 writer 不继承与独立 CLI 隔离先红后绿；审阅修正轮补充成功提交原子化、运行期违规终止与真实 redirect 回归后 41/41。
 - 自动检查：`make macos-test` 41 tests / 0 failures（17 ManagedProtocolTests、17 ManagedProcessTests、7 ManagedProcessGoIntegrationTests；含生产默认 4s termination grace 实测 4.2s 后才 SIGKILL 的兜底用例）；fresh `xcodebuild build`（Debug、CODE_SIGNING_ALLOWED=NO）BUILD SUCCEEDED，新文件无警告（仅既有 AppDelegate/PopoverView 的 `run` unused 警告）；`gofmt -l .` 干净、`go vet ./...` 干净、`go test ./... -count=1` 全部通过（Go 侧零改动）。已知既存 `internal/server_test.go:339-340` errcheck 未触碰、未复跑 lint、不声称 lint 通过。
 - 真实 Go 集成（生产 launch 路径，工具置于隔离临时 bundle）：目录递归与嵌套文档 GET 200；`中文 说明.md` 单文件 URL 精确定位且同目录其他 `.md` 返回 404；空目录返回 `No Markdown files` 空状态；不存在目标得到真实 `fatal target-unavailable` 且子进程已结束；两个真实会话停 A → A 真实退出（可捕获兄弟继承 writer 的回归）而 B 继续 200；失败启动后新会话正常；独立 CLI（`--json --browser=false --no-reload`）在适配器会话停止后继续 200 且进程存活。
@@ -105,7 +105,7 @@ Proposal source: ../proposal.md
   临时 smoke/诊断文件与本次 owned 资源已清理。
 - 独立审阅：Standards 与 Spec 两轴最终均无未解决 blocking/advisory/scope decision（修正两轮：Standards 首轮 P1 原子提交 + 4×P2、二轮 2×P2；Spec 首轮 3×P2 + 2 advisory；全部在范围内修复并 fresh re-review 通过 0 剩余）。修正包括：成功提交与失败/退出状态在同一把锁内原子判定（含真实 `process.isRunning`）；完整帧与未完成残余的 64 KiB 上限均在追加前检查；ready 后解码/校验违规以 `protocolViolation` 事件报告一次并终止该 child、持续排空 stdout；fatal 要求非空 message；redirect 回归改为真实 302 并以控制请求证明目标 origin 可达、断言未被跟随；删除重复与越权的永久测试。
 - 范围裁决与修正（最小合规选项）：删除无 child 停止的独立永久测试（保留防止挂起的 guard；协调器语义属 04）；架构文档不再把重复停止/预启动停止列为本票验收；失败时 stderr 诊断尾部标注为尽力而为；SIGKILL 兜底仅针对该 owned pid（理论 PID 复用窗口无演示可达证据）。
-- 未覆盖/限制：AppKit/Finder/TCC/浏览器动作与候选包属 05–11；未在 Intel/macOS 13 实际运行；不对不可中断内核 I/O 承诺硬截止；不管理 Chrome 后代；本仓库位于外置卷时 xctest 无法打开其文件（dyld/open 阻塞）且 xcodebuild 不转发自定义环境变量，故 `make macos-test` 先将工具复制到系统卷临时 bundle 再由测试使用，生产宿主的确定内置路径（`Contents/MacOS/go-grip`）仍属 05/10。
+- 未覆盖/限制：AppKit/Finder/TCC/浏览器动作与候选包属 05–11；未在 Intel/macOS 13 实际运行；不对不可中断内核 I/O 承诺硬截止；不管理 Chrome 后代；本仓库位于外置卷时 xctest 无法打开其文件（dyld/open 阻塞）且 xcodebuild 不转发自定义环境变量，故 `make macos-test` 先将工具复制到系统卷临时 bundle 再由测试使用，生产宿主的确定内置路径（`Contents/MacOS/md-grip`）仍属 05/10。
 
 ### 修正记录（关闭后第二轮独立复核）
 

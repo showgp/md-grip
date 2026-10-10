@@ -1,8 +1,8 @@
 # 31 — Make menu status and appearance visually accessible
 
-**What to build:** Ensure the GoGrip template icon, Preview Session count, unread error, and panel state remain legible across system appearances without relying only on color.
+**What to build:** Ensure the MDGrip template icon, Preview Session count, unread error, and panel state remain legible across system appearances without relying only on color.
 
-**Blocked by:** 20 — Create the GoGrip menu bar template icon; 21 — Show session count and unread error state; 23 — Integrate panel states and drag presentation; 28 — Localize content flows in Simplified Chinese.
+**Blocked by:** 20 — Create the MDGrip menu bar template icon; 21 — Show session count and unread error state; 23 — Integrate panel states and drag presentation; 28 — Localize content flows in Simplified Chinese.
 
 **Status:** ready-for-agent
 

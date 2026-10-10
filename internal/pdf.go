@@ -12,7 +12,7 @@ import (
 
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
-	"github.com/showgp/go-grip/defaults"
+	"github.com/showgp/md-grip/defaults"
 )
 
 // PDFData carries the data used by the print template (templates/print.html).

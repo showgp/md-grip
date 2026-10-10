@@ -1,4 +1,4 @@
-module github.com/showgp/go-grip
+module github.com/showgp/md-grip
 
 go 1.26
 

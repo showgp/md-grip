@@ -2,16 +2,16 @@
 
 ## Purpose
 
-让用户从 Finder 的已选目录或 Markdown 文件直接进入 GoGrip 本地预览，不依赖终端或登录启动。此能力定义 Services 入口、目标接收、批量操作、首次引导及权限边界；系统控制的菜单位置与启用状态不属于 App 可自行保证的范围。
+让用户从 Finder 的已选目录或 Markdown 文件直接进入 MDGrip 本地预览，不依赖终端或登录启动。此能力定义 Services 入口、目标接收、批量操作、首次引导及权限边界；系统控制的菜单位置与启用状态不属于 App 可自行保证的范围。
 
 ## ADDED Requirements
 
 ### Requirement: Finder Services entry
 
-应用 SHALL 提供“用 GoGrip 打开”的 macOS Services 命令，让用户从 Finder 对已选目标执行打开操作。宿主未运行时，服务请求 SHALL 能启动宿主并处理所选目标，不以登录启动已开启为前提。应用 SHALL 接受系统决定的服务菜单位置和用户启用状态，不要求右键菜单第一层或目录空白处入口。
+应用 SHALL 提供“用 MDGrip 打开”的 macOS Services 命令，让用户从 Finder 对已选目标执行打开操作。宿主未运行时，服务请求 SHALL 能启动宿主并处理所选目标，不以登录启动已开启为前提。应用 SHALL 接受系统决定的服务菜单位置和用户启用状态，不要求右键菜单第一层或目录空白处入口。
 
 #### Scenario: Open a selected folder from Finder
-- **WHEN** 用户已安装应用并在系统允许显示该服务的情况下，对 Finder 中选中的可访问目录调用“用 GoGrip 打开”
+- **WHEN** 用户已安装应用并在系统允许显示该服务的情况下，对 Finder 中选中的可访问目录调用“用 MDGrip 打开”
 - **THEN** 应用接收该目录并按预览会话规格打开预览，不要求用户执行终端命令
 
 #### Scenario: Invoke the service while the host is not running

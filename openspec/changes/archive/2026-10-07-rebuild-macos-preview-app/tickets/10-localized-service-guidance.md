@@ -50,14 +50,14 @@ Blocked by: 09-recent-target-panel
 - 如选择提供 `NSUpdateDynamicServices()`，仅请求系统重扫声明；它是批准设计允许的手段，不是必做的新按钮或菜单出现保证。不得调用服务启用偏好 API、写系统服务偏好、清索引或自动启用用户关闭的服务。
 - 权限说明沿用 08 的实际条件式指导：普通目标不泛化提示；失败保留原目标/原因，可检查 Files and Folders 等适用系统授权，但不把所有访问错误诊断成 TCC，不要求扩大权限。网络共享访问/监视仍有 08 未证边界。
 - 保持 App 根依赖就绪后、面板展示前注册唯一 provider；引导不能成为 Services 请求的前置确认或改走新路径。冷启动已有处理能力、共享错误报告、关闭面板不停止服务等约束必须保留；不借本票增加通用模态队列或重试框架。
-- 若首次判断确需持久状态，只保存必要的首次使用状态，使用与最近记录/旧历史独立的最小边界；不预定 key、重置/升级策略或额外行为保证，不清整个 UserDefaults 域，不修改新近记录或旧 `go-grip-history`。真实首次状态验证使用获准的专用测试状态，不重置用户数据。
+- 若首次判断确需持久状态，只保存必要的首次使用状态，使用与最近记录/旧历史独立的最小边界；不预定 key、重置/升级策略或额外行为保证，不清整个 UserDefaults 域，不修改新近记录或旧 `md-grip-history`。真实首次状态验证使用获准的专用测试状态，不重置用户数据。
 
 ### Complete native language surface
 
 - 工程按批准设计提供 `en` / `zh-Hans` 资源和英文 development region；资源必须进入实际 App 的构建路径。当前盘点无现成帮助/完整本地化，运行时插值错误也不是 SwiftUI 静态字面量自动覆盖；实施前重查完成后的 09 与唯一 Xcode 工程，复用现有结构，不引入新的语言服务框架。
 - 遍历并覆盖完整原生消费者：运行与最近目标、所有 phase/target/reload 的人类可读标签/说明、路径区分、空状态、打开/重开/复制/停止/全部停止/清历史/退出/帮助；原生数量确认、应用提供的手动选择提示、provider 输入失败、目标准备/启动/浏览器/终止失败、根级汇总与可查看报告、条件式权限指导以及首次/重看引导。11 将来新增的登录 UI 应复用该语言方案，10 不提前交付登录功能。
 - 语言分界是**原生标签和行动指导**与**真实技术诊断**：Go fatal code/message、target/reload state/reason、协议/HTTP/进程底层 detail、系统 `localizedDescription`、实际路径/URL 仍保留其原始信息；用对应语言组织说明和操作，不机械翻译机器枚举/诊断，不丢失原因，不替换成泛化成功/监视状态。原生英文硬编码操作指导不允许作为“原始诊断”漏译。
-- Finder 是独立的系统消费表面：保持唯一 `NSServices`、`NSMessage=openWithGoGrip`、`NSPortName=GoGrip` 与 `NSMenuItem.default` 精确值 **`Open with GoGrip`**；在 **`en.lproj/ServicesMenu.strings`** 和 **`zh-Hans.lproj/ServicesMenu.strings`** 以该精确默认键提供名称。`Localizable.strings`、plist 拷贝/字符串存在或 provider 单测都不能证明 Finder 实际本地化。
+- Finder 是独立的系统消费表面：保持唯一 `NSServices`、`NSMessage=openWithMDGrip`、`NSPortName=MDGrip` 与 `NSMenuItem.default` 精确值 **`Open with MDGrip`**；在 **`en.lproj/ServicesMenu.strings`** 和 **`zh-Hans.lproj/ServicesMenu.strings`** 以该精确默认键提供名称。`Localizable.strings`、plist 拷贝/字符串存在或 provider 单测都不能证明 Finder 实际本地化。
 - macOS 13+ AppKit/SwiftUI 兼容和菜单栏-only 宿主边界不变。语言改变只影响展示，不改变 normalized identity、原始路径、真实 URL、最近成功/recency、运行状态或服务所有权；中文/英文及真实长路径下操作/指导须可读可达，不新增像素尺寸、layout snapshot 或新的布局规格。
 
 ### Non-goals
@@ -89,7 +89,7 @@ Blocked by: 09-recent-target-panel
 - [ ] 实际首次启动提供简短 Finder/Services 使用说明，宿主内有明确可再次查看入口；按说明可以定位 Services 命令和菜单不出现时的系统设置检查，包含适用权限指导，不增加管理主窗口、强制 onboarding、语言或高级设置。
 - [ ] 实际用户关闭服务/菜单不可见场景中说明仍可查看且可操作，按说明自行恢复后找到服务；App 不自动启用或修改系统服务偏好，不把 App 启动、声明存在、provider 注册或可选重扫当作菜单可见性保证，测试环境变更已获准并还原。
 - [ ] 在实际简中、英文及不支持语言环境观察完整 09 native 面板、状态/原因/全部操作、数量确认、应用提供的手动选择文本、首次/重看帮助及错误行动指导；简中/英文跟随系统、其他语言英文回退，不只翻译旧简化 popover，不提供应用内语言选择。
-- [ ] `en`/`zh-Hans` 资源与英文 development region 进入实际构建；Finder Services 两份 `ServicesMenu.strings` 使用精确默认键 `Open with GoGrip`，保持唯一声明/selector/port；上述三种 Finder 实际语言环境中观察服务名称和真实调用，而非以 App locale、plist/strings/资源拷贝测试替代。
+- [ ] `en`/`zh-Hans` 资源与英文 development region 进入实际构建；Finder Services 两份 `ServicesMenu.strings` 使用精确默认键 `Open with MDGrip`，保持唯一声明/selector/port；上述三种 Finder 实际语言环境中观察服务名称和真实调用，而非以 App locale、plist/strings/资源拷贝测试替代。
 - [ ] 所有原生人类可读标签、错误包装和可执行指导按对应语言呈现，含条件式访问指导；真实 path/URL、Go code/message、target/reload reason 和系统/协议/进程底层诊断保留，不把英文应用操作说明误当原始诊断漏译，不扩张权限或伪造 running/watch。
 - [ ] 保持已批准根级一次失败汇总、可查看报告与既有失败横幅决策，成功不添成功提示；浏览器失败保留运行事实/恢复入口，陈旧最近目标及异常退出的实际原因/操作可理解，不另建报告或状态事实源、不自动恢复。
 - [ ] 首次/重看帮助、语言资源和展示不改变当前真实服务、URL、normalized identity、新最近记录或 recency；必要首次状态独立且最小，不读/迁移/写/删旧 50 项、不清整个 UserDefaults 域，不把清历史变成停服务。
@@ -106,12 +106,12 @@ Blocked by: 09-recent-target-panel
 ## Closure record
 
 - 关闭：2026-10-06，状态 `done`；13 项验收全部按实际证据通过。实施批准：用户显式批准本票范围（5.1/5.2 一体）、S1 单 scoped TDD seam、native smoke 与具体环境操作（/Applications 替换并备份、Services 启用开关切换、首次引导键目标性切换、Finder/pbs 重启、全局 AppleLanguages 轻量切换及必要时升级）。
-- 变更面：新增 `macos/GoGrip/Utilities/FirstUseGuidanceStore.swift`、`macos/GoGripTests/FirstUseGuidanceStoreTests.swift`、`macos/GoGrip/en.lproj/{Localizable,ServicesMenu}.strings`、`macos/GoGrip/zh-Hans.lproj/{Localizable,ServicesMenu}.strings`；修改 `macos/GoGrip/AppDelegate.swift`（首启展示、Help 闭包、setup helper 主 actor 标注）、`Services/AppAlertPresenter.swift`（guidance 单槽 + 提示文案本地化）、`Views/PopoverView.swift`（Help 入口、phase/fallback 本地化）、`PreviewAppModel.swift`、`Services/PreviewSessionCoordinator.swift`、`Services/TargetPreparation.swift`、`FinderServiceProvider.swift`（包装句本地化）、`macos/GoGrip.xcodeproj/project.pbxproj`（Resources phase、两个 PBXVariantGroup、zh-Hans knownRegion、新源/测试文件）、`README.md`、`docs/ARCHITECTURE.md`、`docs/HANDOVER.md`。
-- Scoped TDD 证据（批准 seam S1）：red 为 `cannot find 'FirstUseGuidanceStore' in scope` 编译失败；实现后 2 项隔离域回归（首次展示一次且重建实例保持；与最近键/旧 `go-grip-history` 哨兵分离）转绿；未新增字符串存在、资源拷贝、默认值、plist、wiring、mock echo、尺寸/布局或重复矩阵测试；既有文本断言在无资源 test bundle 中确定性解析英文键且为行为断言，未重钉译文。
+- 变更面：新增 `macos/MDGrip/Utilities/FirstUseGuidanceStore.swift`、`macos/MDGripTests/FirstUseGuidanceStoreTests.swift`、`macos/MDGrip/en.lproj/{Localizable,ServicesMenu}.strings`、`macos/MDGrip/zh-Hans.lproj/{Localizable,ServicesMenu}.strings`；修改 `macos/MDGrip/AppDelegate.swift`（首启展示、Help 闭包、setup helper 主 actor 标注）、`Services/AppAlertPresenter.swift`（guidance 单槽 + 提示文案本地化）、`Views/PopoverView.swift`（Help 入口、phase/fallback 本地化）、`PreviewAppModel.swift`、`Services/PreviewSessionCoordinator.swift`、`Services/TargetPreparation.swift`、`FinderServiceProvider.swift`（包装句本地化）、`macos/MDGrip.xcodeproj/project.pbxproj`（Resources phase、两个 PBXVariantGroup、zh-Hans knownRegion、新源/测试文件）、`README.md`、`docs/ARCHITECTURE.md`、`docs/HANDOVER.md`。
+- Scoped TDD 证据（批准 seam S1）：red 为 `cannot find 'FirstUseGuidanceStore' in scope` 编译失败；实现后 2 项隔离域回归（首次展示一次且重建实例保持；与最近键/旧 `md-grip-history` 哨兵分离）转绿；未新增字符串存在、资源拷贝、默认值、plist、wiring、mock echo、尺寸/布局或重复矩阵测试；既有文本断言在无资源 test bundle 中确定性解析英文键且为行为断言，未重钉译文。
 - 自动检查（最终树）：`make macos-test` **92 tests / 0 failures**（87 → 92）；`make macos` Release `BUILD SUCCEEDED` + `codesign --verify --deep --strict` 通过；产物含 `en.lproj`/`zh-Hans.lproj` × `Localizable.strings`/`ServicesMenu.strings` 四文件、`CFBundleDevelopmentRegion=en`、`knownRegions` 含 `zh-Hans`；53 个键两表对齐、`plutil -lint` 通过。Go 零改动，未重跑 Go 测试/errcheck。
-- 真实 smoke（2026-10-06，本机 macOS 27.0.1，最终开发构建 `3949aca2…` 安装于 `/Applications`；系统/Finder 语言经全局 AppleLanguages 在 en-US→zh-Hans→ja 间切换并已还原 en-US；Services 启用开关、首次键与最近键均记录并还原，旧 `go-grip-history` 未动；详见 `docs/ARCHITECTURE.md` 10 记录）：en 首次冷启动（宿主由 launchd 启动，PPID=1）自动显示引导，同时 Finder 服务已建立 owned child/回环端口/HTTP 内容——引导不阻断 provider/批次；第二次启动不自动显示，面板 Help 可重看且运行会话 PID/URL 不变；zh-Hans 面板/6 目标数量确认/批次汇总/陈旧目标/浏览器失败/运行期退出原因均为中文包装并保留原始 path/URL/reason；真实 Finder Services 菜单在 zh 显示“用 GoGrip 打开”、不支持语言（ja）回退 “Open with GoGrip”，两者均经真实调用进入同一内置 Go pipeline；用户经 System Settings 关闭服务后引导仍可查看、App 未自动启用，按说明恢复后菜单重现；受控浏览器拒绝构建（标注、源码 diff 还原一致、最终重装）观察到 zh 浏览器失败提示且会话/URL 保持；面板 Quit 释放 owned PID/端口，`Stop All` 不影响独立 CLI（6419 继续 HTTP 200）。
+- 真实 smoke（2026-10-06，本机 macOS 27.0.1，最终开发构建 `3949aca2…` 安装于 `/Applications`；系统/Finder 语言经全局 AppleLanguages 在 en-US→zh-Hans→ja 间切换并已还原 en-US；Services 启用开关、首次键与最近键均记录并还原，旧 `md-grip-history` 未动；详见 `docs/ARCHITECTURE.md` 10 记录）：en 首次冷启动（宿主由 launchd 启动，PPID=1）自动显示引导，同时 Finder 服务已建立 owned child/回环端口/HTTP 内容——引导不阻断 provider/批次；第二次启动不自动显示，面板 Help 可重看且运行会话 PID/URL 不变；zh-Hans 面板/6 目标数量确认/批次汇总/陈旧目标/浏览器失败/运行期退出原因均为中文包装并保留原始 path/URL/reason；真实 Finder Services 菜单在 zh 显示“用 MDGrip 打开”、不支持语言（ja）回退 “Open with MDGrip”，两者均经真实调用进入同一内置 Go pipeline；用户经 System Settings 关闭服务后引导仍可查看、App 未自动启用，按说明恢复后菜单重现；受控浏览器拒绝构建（标注、源码 diff 还原一致、最终重装）观察到 zh 浏览器失败提示且会话/URL 保持；面板 Quit 释放 owned PID/端口，`Stop All` 不影响独立 CLI（6419 继续 HTTP 200）。
 - 独立只读审阅：Standards 首轮 1 阻塞（引导未说明“预览在默认浏览器打开”）→ 修复（en/zh + README）并在实际 en/zh/Help 表面复核 → 增量复审 0/0；Spec 首轮 0 阻塞、3 advisory（S-A1 证据时序、S-A2 设置路径缺 Keyboard 父级、S-A3 自动引导激活）+ 1 scope（S-D1 自动展示触发范围）；S-A1/S-A2 已修并复审 CLOSED，S-D1 维持解释 A（规格 scenario 字面满足，无需修订 artifact），S-A3 记为任务 13 候选 smoke 观察项（若观察到浏览器焦点被抢，自动实例改为不激活展示，Help 不变）。最终两轴均无未决阻塞或范围裁决。
 - 保留的 advisory/限制：S-A3（自动引导激活，任务 13 观察项）；登录项（5.3）、Intel/macOS 13、已挂载网络卷（08 保持 open、3.3 未勾选）与候选包（12/13）未验证；开发构建证明不提升为候选或跨环境验收；ad-hoc 身份跨构建可能需重新授权（既有实测限制）。
 - tasks.md：本票完整交付并验证 **5.1、5.2**，两项已勾选；其他任务、票据与 checkbox 未变。
 - 未覆盖：未提交/推送、未同步主规格、未归档、未发布/实施 11；08 保持 open；覆盖映射的发布时快照留待下一次发布轮更新（其自身说明与 05–07 先例）。
-- 环境与用户数据还原：`/Applications` 为本票最终开发构建 `3949aca2…`；替换前构建 `7a2c78fa…` 备份于 `~/Desktop/GoGrip-backups/GoGrip-07-backup.app`；全局 `AppleLanguages=en-US`；Services 无 GoGrip 覆盖项；首次/最近键删除（会话前即为缺失）；临时目标与验证资源已清理。
+- 环境与用户数据还原：`/Applications` 为本票最终开发构建 `3949aca2…`；替换前构建 `7a2c78fa…` 备份于 `~/Desktop/MDGrip-backups/MDGrip-07-backup.app`；全局 `AppleLanguages=en-US`；Services 无 MDGrip 覆盖项；首次/最近键删除（会话前即为缺失）；临时目标与验证资源已清理。

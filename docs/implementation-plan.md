@@ -1,8 +1,8 @@
-# go-grip Documentation Navigation Implementation Plan
+# md-grip Documentation Navigation Implementation Plan
 
 ## Purpose
 
-This document tracks the implementation plan and progress for improving go-grip from a single Markdown preview tool into a more convenient local documentation browser.
+This document tracks the implementation plan and progress for improving md-grip from a single Markdown preview tool into a more convenient local documentation browser.
 
 The planned work covers:
 
@@ -28,7 +28,7 @@ This file should be updated during implementation with progress, decisions, and 
 Triggered by:
 
 ```bash
-go-grip README.md
+md-grip README.md
 ```
 
 Expected behavior:
@@ -45,9 +45,9 @@ Expected behavior:
 Triggered by:
 
 ```bash
-go-grip
-go-grip .
-go-grip docs
+md-grip
+md-grip .
+md-grip docs
 ```
 
 Expected behavior:
@@ -258,8 +258,8 @@ Suggested behavior:
 
 ## Acceptance Criteria
 
-- Running `go-grip README.md` renders the selected file with a current-article TOC and no article-list sidebar.
-- Running `go-grip`, `go-grip .`, or `go-grip docs` opens a directory documentation view with a persistent sidebar.
+- Running `md-grip README.md` renders the selected file with a current-article TOC and no article-list sidebar.
+- Running `md-grip`, `md-grip .`, or `md-grip docs` opens a directory documentation view with a persistent sidebar.
 - Clicking sidebar entries renders different Markdown files without restarting the server.
 - The current sidebar item is visibly active.
 - Each rendered article has a TOC based on its own headings.
@@ -385,7 +385,7 @@ CSS inclusion matrix:
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>go-grip export</title>
+  <title>md-grip export</title>
   <style>{{ .CssLight }}</style>
   <style>{{ .CssCodeLight }}</style>
   <style>{{ .CssMermaid }}</style>
@@ -543,9 +543,9 @@ RunE: func(cmd *cobra.Command, args []string) error {
 
 Usage examples:
 ```bash
-go-grip --export README.md > README.html           # pipe to stdout
-go-grip --export README.md --output article.html    # write to file
-go-grip --export README.md | pbcopy                 # pipe to clipboard
+md-grip --export README.md > README.html           # pipe to stdout
+md-grip --export README.md --output article.html    # write to file
+md-grip --export README.md | pbcopy                 # pipe to clipboard
 ```
 
 Note: When `--export` is used, the positional `args[0]` is NOT consumed. The `--export` flag takes the file path directly, avoiding confusion between serve mode and export mode.
@@ -659,7 +659,7 @@ The `fetch` + blob approach is recommended — it doesn't navigate away from the
 
 - Should `--export` respect the `--recursive` flag for discovering files in subdirectories? (Current plan: no — `--export` takes a single file argument.)
 - Should the "Export HTML" button be visible in single-file mode only, or in directory mode too? (Current plan: both modes. The button reads the current file from `window.location.pathname`.)
-- Should the exported `<title>` be derived from the first heading of the article instead of a static "go-grip export"? (Nice-to-have enhancement.)
+- Should the exported `<title>` be derived from the first heading of the article instead of a static "md-grip export"? (Nice-to-have enhancement.)
 ## PDF Export Feature Plan
 
 ### Feature Overview
@@ -901,7 +901,7 @@ FROM golang:1.25-alpine
 COPY --from=chrome /headless-shell /headless-shell
 RUN apk add --no-cache ca-certificates tzdata
 # ... build go binary ...
-ENTRYPOINT ["/go-grip"]
+ENTRYPOINT ["/md-grip"]
 
 - [x] Update flake.nix (optional): add chromium to build inputs for nix-based deployments
 

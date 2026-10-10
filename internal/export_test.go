@@ -44,7 +44,7 @@ func TestBuildExportHTML_ContainsExpectedElements(t *testing.T) {
 	// Should contain basic structure
 	for _, want := range []string{
 		"<!doctype html>",
-		`<title>go-grip export</title>`,
+		`<title>md-grip export</title>`,
 		`<body class="markdown-body">`,
 		"<h1>Hello</h1>",
 		"<p>Test content</p>",

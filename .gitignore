@@ -4,6 +4,5 @@ bin
 macos/.build
 .codewhale
 .deepseek
-/go-grip
 .DS_Store
 xcuserdata/

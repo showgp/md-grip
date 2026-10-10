@@ -1,8 +1,8 @@
-# GoGrip macOS App 实施方案
+# MDGrip macOS App 实施方案
 
 > 状态（2026-10-05）：本文是旧示例 App 的实施方案记录，所描述的拖拽/历史/Finder Sync/嵌入 Resources 链路已从工程移除；旧历史存储源（`Models/HistoryEntry.swift`、`Utilities/Storage.swift`）与旧 `StorageTests.swift` 已随任务 09 移除，其 50 项历史与拖拽界面未在新宿主保留。当前宿主按 `openspec/changes/rebuild-macos-preview-app` 重建，能力与边界以 `docs/ARCHITECTURE.md` 第七节和 `README.md` 为准。
 
-> 候选打包（2026-10-06，任务 12）：宿主已可按 `make macos-candidate` 从显式 archive 生成 universal 候选 App/DMG，CI 配置为以 workflow artifact 上传（远端未运行，仅本地等价验证）；本文描述的旧示例构建/发布细节不再是工程来源，唯一工程为 `macos/GoGrip.xcodeproj`，候选命令与边界见 `README.md` 与 `docs/ARCHITECTURE.md` 第十六节。
+> 候选打包（2026-10-06，任务 12）：宿主已可按 `make macos-candidate` 从显式 archive 生成 universal 候选 App/DMG，CI 配置为以 workflow artifact 上传（远端未运行，仅本地等价验证）；本文描述的旧示例构建/发布细节不再是工程来源，唯一工程为 `macos/MDGrip.xcodeproj`，候选命令与边界见 `README.md` 与 `docs/ARCHITECTURE.md` 第十六节。
 
 > 创建日期: 2026-06-03
 > 基于: [macos-app-plan.md](macos-app-plan.md)
@@ -38,7 +38,7 @@ Phase 2: Xcode 项目 ──→ Phase 3: 状态栏 ──────┤
 
 ## Phase 1: Go 基础设施
 
-> 目标: go-grip 支持 `--json` 输出模式，为 Swift App 提供端口感知能力
+> 目标: md-grip 支持 `--json` 输出模式，为 Swift App 提供端口感知能力
 
 ### 任务
 
@@ -73,18 +73,18 @@ Phase 2: Xcode 项目 ──→ Phase 3: 状态栏 ──────┤
 
 | # | 任务 | 文件 | 预估 |
 |---|------|------|------|
-| 2.1 | 用 Xcode 创建 macOS App 项目 (Swift, macOS 13+) | `macos/GoGrip.xcodeproj` | 15 min |
+| 2.1 | 用 Xcode 创建 macOS App 项目 (Swift, macOS 13+) | `macos/MDGrip.xcodeproj` | 15 min |
 | 2.2 | 配置 Build Settings (deployment target, bundle ID, 禁用签名) | `.xcodeproj` | 10 min |
-| 2.3 | 创建 Info.plist (LSUIElement=true 等) | `macos/GoGrip/Info.plist` | 10 min |
-| 2.4 | 创建 GoGripApp.swift (@main App 入口) | `macos/GoGrip/GoGripApp.swift` | 10 min |
-| 2.5 | 创建 AppDelegate.swift (NSApplicationDelegate) | `macos/GoGrip/AppDelegate.swift` | 15 min |
-| 2.6 | Xcode Build Phase: 添加 go-grip 构建脚本 | `.xcodeproj` | 15 min |
+| 2.3 | 创建 Info.plist (LSUIElement=true 等) | `macos/MDGrip/Info.plist` | 10 min |
+| 2.4 | 创建 MDGripApp.swift (@main App 入口) | `macos/MDGrip/MDGripApp.swift` | 10 min |
+| 2.5 | 创建 AppDelegate.swift (NSApplicationDelegate) | `macos/MDGrip/AppDelegate.swift` | 15 min |
+| 2.6 | Xcode Build Phase: 添加 md-grip 构建脚本 | `.xcodeproj` | 15 min |
 | 2.7 | 验证: Cmd+B 编译通过，App 可运行（无 UI） | — | 10 min |
 
 ### 验收标准
 
 - [ ] Xcode 项目可在 macOS 13+ 编译
-- [ ] Build Phase 脚本能构建 go-grip universal binary 并放入 App Bundle
+- [ ] Build Phase 脚本能构建 md-grip universal binary 并放入 App Bundle
 - [ ] App 启动后不出现在 Dock 和 App Switcher 中
 - [ ] App 启动后在菜单栏显示（初始可为空白占位）
 
@@ -118,7 +118,7 @@ Phase 2: Xcode 项目 ──→ Phase 3: 状态栏 ──────┤
 
 ## Phase 4: 进程管理 + 端口检测
 
-> 目标: 能启动/停止 go-grip 子进程，获取实际端口
+> 目标: 能启动/停止 md-grip 子进程，获取实际端口
 > 前置依赖: Phase 1
 
 ### 任务
@@ -136,7 +136,7 @@ Phase 2: Xcode 项目 ──→ Phase 3: 状态栏 ──────┤
 
 ### 验收标准
 
-- [ ] `ProcessManager.start(path:)` 启动 go-grip 子进程
+- [ ] `ProcessManager.start(path:)` 启动 md-grip 子进程
 - [ ] `readPortFromStdout` 正确解析 JSON 获取实际端口
 - [ ] 5 秒超时后 fallback 到 6419
 - [ ] `stop(path:)` 终止子进程，instances 字典同步更新
@@ -264,12 +264,12 @@ Phase 2: Xcode 项目 ──→ Phase 3: 状态栏 ──────┤
 
 | # | 任务 | 文件 | 预估 |
 |---|------|------|------|
-| 9.1 | go-grip 二进制不存在 → popover 显示错误提示 | `Views/PopoverView.swift` | 10 min |
-| 9.2 | go-grip 启动失败 → Alert 提示用户 | `Views/PopoverView.swift` | 10 min |
-| 9.3 | go-grip 进程意外退出 → 移除实例 + toast 提示 | `Services/ProcessManager.swift` | 10 min |
+| 9.1 | md-grip 二进制不存在 → popover 显示错误提示 | `Views/PopoverView.swift` | 10 min |
+| 9.2 | md-grip 启动失败 → Alert 提示用户 | `Views/PopoverView.swift` | 10 min |
+| 9.3 | md-grip 进程意外退出 → 移除实例 + toast 提示 | `Services/ProcessManager.swift` | 10 min |
 | 9.4 | 拖拽非支持文件 → 蒙版显示拒绝提示 | `Views/DropOverlayView.swift` | 5 min |
 | 9.5 | 端口全占满（100 个）→ 启动失败处理 | `Services/ProcessManager.swift` | 5 min |
-| 9.6 | 验证: 删除 go-grip 二进制 → 打开时显示错误 | — | 5 min |
+| 9.6 | 验证: 删除 md-grip 二进制 → 打开时显示错误 | — | 5 min |
 
 ### 验收标准
 
@@ -296,9 +296,9 @@ Phase 2: Xcode 项目 ──→ Phase 3: 状态栏 ──────┤
 
 ### 验收标准
 
-- [ ] 推送 `v*` tag → GitHub Release 包含 `GoGrip.dmg`
+- [ ] 推送 `v*` tag → GitHub Release 包含 `MDGrip.dmg`
 - [ ] PR → CI 自动编译 Swift App（检查编译错误）
-- [ ] DMG 包含 `GoGrip.app` + Applications 快捷方式（未签名，有 Gatekeeper 警告）
+- [ ] DMG 包含 `MDGrip.app` + Applications 快捷方式（未签名，有 Gatekeeper 警告）
 
 ---
 
@@ -311,17 +311,17 @@ Phase 2: Xcode 项目 ──→ Phase 3: 状态栏 ──────┤
 
 | # | 任务 | 文件 | 预估 |
 |---|------|------|------|
-| 11.1 | Storage 单元测试 (load/save/add/remove/clear) | `GoGripTests/StorageTests.swift` | 20 min |
-| 11.2 | ProcessManager 单元测试 (start/stop/stopAll/isRunning/port) | `GoGripTests/ProcessManagerTests.swift` | 20 min |
-| 11.3 | readPortFromStdout 单元测试 (正常/混合/EOF/超时) | `GoGripTests/PortReaderTests.swift` | 20 min |
-| 11.4 | 集成测试: 启动子进程 → 读端口 → HTTP 验证 | `GoGripTests/IntegrationTests.swift` | 20 min |
+| 11.1 | Storage 单元测试 (load/save/add/remove/clear) | `MDGripTests/StorageTests.swift` | 20 min |
+| 11.2 | ProcessManager 单元测试 (start/stop/stopAll/isRunning/port) | `MDGripTests/ProcessManagerTests.swift` | 20 min |
+| 11.3 | readPortFromStdout 单元测试 (正常/混合/EOF/超时) | `MDGripTests/PortReaderTests.swift` | 20 min |
+| 11.4 | 集成测试: 启动子进程 → 读端口 → HTTP 验证 | `MDGripTests/IntegrationTests.swift` | 20 min |
 | 11.5 | 手动 UI 测试: 拖拽/打开/历史/badge 全流程 | — | 20 min |
 | 11.6 | Edge case 测试: 路径含空格、Unicode、符号链接 | — | 10 min |
 
 ### 验收标准
 
 - [ ] 单元测试全部通过
-- [ ] 集成测试: go-grip 子进程可启动并响应 HTTP
+- [ ] 集成测试: md-grip 子进程可启动并响应 HTTP
 - [ ] UI 全流程: 拖拽 → 打开 → 历史 → badge → 关闭 → 退出清理
 
 ---
@@ -386,27 +386,27 @@ Phase 1 和 Phase 2 可并行执行。Phase 3 依赖 Phase 2。Phase 4 依赖 Ph
 
 | 文件 | 变更类型 |
 |------|----------|
-| `macos/GoGrip.xcodeproj/` | 新建 |
-| `macos/GoGrip/GoGripApp.swift` | 新建 |
-| `macos/GoGrip/AppDelegate.swift` | 新建 |
-| `macos/GoGrip/Models/HistoryEntry.swift` | 新建 |
-| `macos/GoGrip/Services/ProcessManager.swift` | 新建 |
-| `macos/GoGrip/Views/PopoverView.swift` | 新建 |
-| `macos/GoGrip/Views/DropOverlayView.swift` | 新建 |
-| `macos/GoGrip/Views/HistoryListView.swift` | 新建 |
-| `macos/GoGrip/Views/HistoryRowView.swift` | 新建 |
-| `macos/GoGrip/Views/SettingsView.swift` | 新建 |
-| `macos/GoGrip/Utilities/Storage.swift` | 新建 |
-| `macos/GoGrip/Info.plist` | 新建 |
+| `macos/MDGrip.xcodeproj/` | 新建 |
+| `macos/MDGrip/MDGripApp.swift` | 新建 |
+| `macos/MDGrip/AppDelegate.swift` | 新建 |
+| `macos/MDGrip/Models/HistoryEntry.swift` | 新建 |
+| `macos/MDGrip/Services/ProcessManager.swift` | 新建 |
+| `macos/MDGrip/Views/PopoverView.swift` | 新建 |
+| `macos/MDGrip/Views/DropOverlayView.swift` | 新建 |
+| `macos/MDGrip/Views/HistoryListView.swift` | 新建 |
+| `macos/MDGrip/Views/HistoryRowView.swift` | 新建 |
+| `macos/MDGrip/Views/SettingsView.swift` | 新建 |
+| `macos/MDGrip/Utilities/Storage.swift` | 新建 |
+| `macos/MDGrip/Info.plist` | 新建 |
 
 ### 测试文件（Phase 11）
 
 | 文件 | 变更类型 |
 |------|----------|
-| `macos/GoGripTests/StorageTests.swift` | 新建 |
-| `macos/GoGripTests/ProcessManagerTests.swift` | 新建 |
-| `macos/GoGripTests/PortReaderTests.swift` | 新建 |
-| `macos/GoGripTests/IntegrationTests.swift` | 新建 |
+| `macos/MDGripTests/StorageTests.swift` | 新建 |
+| `macos/MDGripTests/ProcessManagerTests.swift` | 新建 |
+| `macos/MDGripTests/PortReaderTests.swift` | 新建 |
+| `macos/MDGripTests/IntegrationTests.swift` | 新建 |
 
 ### CI 侧（Phase 10）
 

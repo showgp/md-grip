@@ -45,7 +45,7 @@ Proposal source: ../proposal.md
 | `internal/server.go` 的惰性 PDF 资源与 `internal/pdf.go` 的 Close | 正常停止仅释放已经初始化的资源，不能因停止新建 generator；不宣称 EOF 能可靠清扫任意 Chrome 后代。 |
 | `docs/ARCHITECTURE.md` | 随验证结果更新 Go 启动、managed 协议、独立 CLI 区别与所有权退出限制。 |
 
-协议遵循已批准 design：managed stdout 仅含序列化的 UTF-8 v1 NDJSON，每条带 generation，ready 含完整 url 和真实 reload 快照，致命失败发可分类 fatal 后退出，日志走 stderr。`/__gogrip/ready` 仅在 managed 路径提供 204 与 `X-GoGrip-Generation`，不访问文件系统或重新渲染正文。本票不实现 Swift 的 64 KiB 解码/诊断缓冲和 15 秒启动期限。
+协议遵循已批准 design：managed stdout 仅含序列化的 UTF-8 v1 NDJSON，每条带 generation，ready 含完整 url 和真实 reload 快照，致命失败发可分类 fatal 后退出，日志走 stderr。`/__mdgrip/ready` 仅在 managed 路径提供 204 与 `X-MDGrip-Generation`，不访问文件系统或重新渲染正文。本票不实现 Swift 的 64 KiB 解码/诊断缓冲和 15 秒启动期限。
 
 所有权监视必须先于目标解析、卷读取、watcher 和 listener；owner EOF/读错误取消运行，并由独立 watchdog 在 2 秒善后期限后强制退出，不能等阻塞启动返回。正常关闭含有界 HTTP 关闭、watcher 结束等待、WebSocket 关闭和已初始化 PDF 资源释放。允许强制退出绕过 defer；不对不可中断内核 I/O 承诺精确硬截止。Swift 的 CLOEXEC 临界区、4 秒 SIGKILL 兜底及 App 退出协调属于后票。
 
@@ -74,7 +74,7 @@ Proposal source: ../proposal.md
 - 关闭：2026-10-03，状态 `done`；OpenSpec 任务 1.1、1.2 按实际证据勾选，其他任务未勾选。
 - 变更面：`cmd/root.go`（隐藏 `--managed` 与不适用组合拒绝）、`internal/managed.go`（v1 NDJSON、所有权监视/liveness、2s watchdog、回环绑定与 readiness 路由、有界停止）、`internal/hotreload/hotreload.go`（`Stop` 等待循环并关闭 WS 客户端、初始覆盖 State）、`internal/listener.go`（显式 bind）、`internal/server.go`（PDF 释放保护）、`docs/ARCHITECTURE.md`；测试：`internal/managed_test.go`、`internal/hotreload/hotreload_test.go`、`internal/listener_test.go`、`cmd/managed_test.go`。
 - 自动检查：`gofmt -l .`、`go vet ./...` 干净；`go test ./... -count=1` 全部通过；`go test -race ./internal/... ./cmd/...` 连续多轮通过；`golangci-lint run ./...` 仅剩 `internal/server_test.go:339-340` 既有 errcheck（本票未触碰该文件）。
-- 真实 smoke（临时拥有者 + 真实二进制）：ready 为 v1 NDJSON，URL 为 `http://127.0.0.1:<OS 端口>/…`，reload 快照为真实 `pending`/`active`；GET README 与嵌套文档 200 且内容匹配；HEAD `/__gogrip/ready` 204 + `X-GoGrip-Generation`；`lsof` 观察到 `TCP 127.0.0.1:<port> (LISTEN)`；owner SIGKILL 后约 0.03s 子进程与端口消失；双 managed + 独立 `--json` CLI 共存，关闭 A 后 B 与独立 CLI 继续服务（stdin 关闭不影响独立 CLI）。
+- 真实 smoke（临时拥有者 + 真实二进制）：ready 为 v1 NDJSON，URL 为 `http://127.0.0.1:<OS 端口>/…`，reload 快照为真实 `pending`/`active`；GET README 与嵌套文档 200 且内容匹配；HEAD `/__mdgrip/ready` 204 + `X-MDGrip-Generation`；`lsof` 观察到 `TCP 127.0.0.1:<port> (LISTEN)`；owner SIGKILL 后约 0.03s 子进程与端口消失；双 managed + 独立 `--json` CLI 共存，关闭 A 后 B 与独立 CLI 继续服务（stdin 关闭不影响独立 CLI）。
 - 独立审阅：Standards 与 Spec 两轴最终均无未解决的 blocking finding；Standards 复审确认 watchdog 独立于阻塞写、发布与 owner loss 的串行化、非常规目标拒绝；Spec 复审确认与 `macos-preview-sessions` 无冲突。
 - 范围裁决（用户确认）：保留 `reload.state = "disabled"`（`--no-reload`）；目录目标按目录级可访问判定，初始文章不可读按请求级处理（任务 1.3）；显式非激活标志按值判定。
 - 复审修正（2026-10-03）：票面第 17 行与 `coverage-plan.md` 的 open/未实施状态文本已同步为 `done`；删除 `internal/managed_test.go` 中与 `cmd/managed_test.go` 的 `TestManagedRejectsInapplicableInvocations` 重复的进程内 flag 拒绝用例（严重级/事件码/先于目标 I/O 的拒绝语义由真实二进制用例覆盖）；复跑 `go test ./...` 与 `-race` 均通过。

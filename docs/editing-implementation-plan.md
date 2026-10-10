@@ -19,7 +19,7 @@
 ## 目录结构总览
 
 ```
-go-grip/
+md-grip/
 ├── internal/
 │   └── server.go               # ← 核心变更 (新增 ~140 行)
 ├── defaults/

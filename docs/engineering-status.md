@@ -1,12 +1,12 @@
-# go-grip 工程现状说明
+# md-grip 工程现状说明
 
 > 最后更新: 2026-05-16
 
 ## 一、项目概述
 
-`go-grip` 是一个 Go 语言编写的 Markdown 渲染服务器，将 Markdown 文件渲染为 GitHub 风格的 HTML 页面并通过浏览器实时预览。它是 Python 版 [grip](https://github.com/joeyespo/grip) 的完整重写，消除了对外部 GitHub API 的依赖。本仓库是 [chrishrb/go-grip](https://github.com/chrishrb/go-grip) 的 fork，增加了多文件目录浏览能力。
+`md-grip` 是一个 Go 语言编写的 Markdown 渲染服务器，将 Markdown 文件渲染为 GitHub 风格的 HTML 页面并通过浏览器实时预览。它是 Python 版 [grip](https://github.com/joeyespo/grip) 的完整重写，消除了对外部 GitHub API 的依赖。本仓库是 [chrishrb/go-grip](https://github.com/chrishrb/go-grip) 的 fork，增加了多文件目录浏览能力。
 
-- **模块路径**: `github.com/showgp/go-grip`
+- **模块路径**: `github.com/showgp/md-grip`
 - **Go 版本**: 1.25
 - **许可证**: MIT
 
@@ -15,7 +15,7 @@
 ## 二、项目结构
 
 ```
-go-grip/
+md-grip/
 ├── main.go                  # 入口点
 ├── cmd/
 │   └── root.go              # Cobra CLI 定义与参数
@@ -136,8 +136,8 @@ Markdown 输入
 
 | 方式 | 命令 |
 |---|---|
-| 标准 Go | `go build -o bin/go-grip main.go` |
-| Go Install | `go install github.com/showgp/go-grip@latest` |
+| 标准 Go | `go build -o bin/md-grip main.go` |
+| Go Install | `go install github.com/showgp/md-grip@latest` |
 | Nix Flakes | `nix build` |
 | mise | `mise run build` |
 

@@ -20,7 +20,7 @@
     ↓
 [所有浏览器 WebSocket 收到 "reload"] → location.reload()
     ↓
-[go-grip 重新读取 .md → goldmark 渲染 → 返回最新 HTML]
+[md-grip 重新读取 .md → goldmark 渲染 → 返回最新 HTML]
 ```
 
 ---
@@ -77,7 +77,7 @@ POST /save
       → cond.Broadcast() 唤醒所有 WebSocket 协程
         → 每个浏览器连接收到 "reload" 消息
           → window.location.reload()
-            → 重新请求 go-grip → goldmark 渲染 → 新 HTML
+            → 重新请求 md-grip → goldmark 渲染 → 新 HTML
 ```
 
 整个过程约 **100~150ms**，所有已打开的浏览器标签页**同步刷新**。
@@ -86,7 +86,7 @@ POST /save
 
 - `reload` 库**无公开的编程式触发 API**（`cond` 字段未导出），但通过实际写入文件会自动触发 fsnotify，完全不需要额外编程
 - 原子写入（临时文件 + `os.Rename`）可能触发 `IN_MOVED_TO` 而非 `IN_MODIFY`，但 reload 库的 `Rename` 事件处理也存在 (`WatchDirectories` 中)
-- 写入后双重 `no-cache` 头保障：reload 中间件设置 `Cache-Control: no-cache` + go-grip 自身设置 `no-store`
+- 写入后双重 `no-cache` 头保障：reload 中间件设置 `Cache-Control: no-cache` + md-grip 自身设置 `no-store`
 
 ---
 

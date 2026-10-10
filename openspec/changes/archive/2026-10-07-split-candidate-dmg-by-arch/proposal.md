@@ -6,8 +6,8 @@
 
 ## What Changes
 
-- **BREAKING**:候选产物从单个 universal App/DMG 改为两个单架构候选包:`GoGrip-arm64.dmg` 与 `GoGrip-x86_64.dmg`,不再产出 universal DMG 与候选 App zip(后者原为公证前置物,公证属非目标)
-- `macos-archive` 改为按 `ARCHS=arm64` / `ARCHS=x86_64` 分别 archive 一次;`macos/Scripts/build-go-grip.sh` 感知目标架构,只编译对应 Go 架构切片(不再无条件交叉编双架构再 lipo)
+- **BREAKING**:候选产物从单个 universal App/DMG 改为两个单架构候选包:`MDGrip-arm64.dmg` 与 `MDGrip-x86_64.dmg`,不再产出 universal DMG 与候选 App zip(后者原为公证前置物,公证属非目标)
+- `macos-archive` 改为按 `ARCHS=arm64` / `ARCHS=x86_64` 分别 archive 一次;`macos/Scripts/build-md-grip.sh` 感知目标架构,只编译对应 Go 架构切片(不再无条件交叉编双架构再 lipo)
 - `macos-dmg` 一次产出两个 DMG(含 `/Applications` 链接,命名与现配方一致)
 - `macos-candidate-check` 对每个包分别校验:codesign 严格校验、bundle/工具标识符、`verify_arch` 各自单架构、`Signature=adhoc`
 - `.github/workflows/release.yml` 上传两个单架构 DMG 作为 workflow artifact(候选产物仅 artifact、正式发布另行审批的边界不变)

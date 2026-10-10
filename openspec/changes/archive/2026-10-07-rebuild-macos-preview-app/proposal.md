@@ -7,7 +7,7 @@ macOS 用户需要从 Finder 选中目录或 Markdown 文件，一次右键操�
 ## What Changes
 
 - 重新实现原生常驻菜单栏 App，无 Dock 图标或终端窗口；内置 Go 工具，支持 macOS 13+、Apple Silicon 和 Intel，用户无需安装 Go 或配置 PATH。本阶段交付 universal（双架构、macOS 13 deployment target）构建并以架构/部署静态检查核对；Intel 与 macOS 13 实机运行验收延期至后续 change，本阶段不宣称该两项已验证。
-- **BREAKING**：以 macOS Services 替代遗留 Finder Sync 扩展及其专用打开链路，不随 App 发布旧扩展。入口为“选中目标 → 右键 → 服务 → 用 GoGrip 打开”，接受系统控制菜单位置及启用状态；首次启动提供操作与设置引导，不自动修改用户的服务偏好。
+- **BREAKING**：以 macOS Services 替代遗留 Finder Sync 扩展及其专用打开链路，不随 App 发布旧扩展。入口为“选中目标 → 右键 → 服务 → 用 MDGrip 打开”，接受系统控制菜单位置及启用状态；首次启动提供操作与设置引导，不自动修改用户的服务偏好。
 - 统一 Finder 服务和手动选择入口，接受目录与 Markdown 文件，包括权限允许访问的本地、外接及已挂载网络卷目标（网络卷实际访问与热重载降级证据延期至后续 change）。目录默认递归且启用热重载，文件直接进入单文件预览；成功启动后请求默认浏览器打开实际预览 URL。空目录也保留会话并显示空状态，不提供高级启动配置界面。
 - 支持多选并去重，超过 5 个不同有效目标先确认；部分失败不阻断其余目标，保留成功会话，一次汇总失败及不支持的项目，全部成功不额外提示。
 - 规范化路径并解析符号链接，同一目标最多一个会话，重复打开复用服务并再次请求浏览器打开；保留用户选择的路径用于展示。父目录、子目录及文件分别拥有会话，不因包含关系复用；不承诺复用同一个浏览器标签页。
@@ -44,8 +44,8 @@ macOS 用户需要从 Finder 选中目录或 Markdown 文件，一次右键操�
 
 ## Impact
 
-- `macos/GoGrip/`、App plist 与本地化资源：重建宿主、Services 注册、面板、历史与登录启动；替换旧示例逻辑。
-- `macos/GoGripFinderSync/`、Xcode 项目与 `macos/project.yml`：移除旧扩展及嵌入依赖，更新宿主构建配置。
+- `macos/MDGrip/`、App plist 与本地化资源：重建宿主、Services 注册、面板、历史与登录启动；替换旧示例逻辑。
+- `macos/MDGripFinderSync/`、Xcode 项目与 `macos/project.yml`：移除旧扩展及嵌入依赖，更新宿主构建配置。
 - `cmd/root.go`、`internal/server.go`、`internal/listener.go` 及必要的热重载接口：完善宿主集成，纠正实际监听范围并反馈会话状态；不扩大为渲染器重构。
 - `macos/Scripts/`、相关构建及发布流水线：生成内置双架构工具的 App 和候选 DMG；不得将候选产物描述为正式发布就绪。具体集成机制和依赖选择留待 design 审批。
 - 相关 Go/Swift 行为测试、实际 Finder/浏览器与进程生命周期 smoke，以及安装、使用和故障说明需随实现更新；不能以编译或测试通过替代真实路径验证。

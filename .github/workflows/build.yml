@@ -56,7 +56,7 @@ jobs:
       - name: Upload candidate App and DMG
         uses: actions/upload-artifact@v4
         with:
-          name: GoGrip-macos-candidate
+          name: MDGrip-macos-candidate
           path: |
-            macos/.build/candidate/GoGrip-arm64.dmg
-            macos/.build/candidate/GoGrip-x86_64.dmg
+            macos/.build/candidate/MDGrip-arm64.dmg
+            macos/.build/candidate/MDGrip-x86_64.dmg

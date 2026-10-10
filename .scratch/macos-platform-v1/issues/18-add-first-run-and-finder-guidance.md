@@ -11,6 +11,6 @@
 - [ ] Returning users do not see first-run guidance again unless test state is explicitly reset.
 - [ ] The application refreshes macOS Services registration on launch.
 - [ ] The panel or Settings reports the Finder Command's expected availability without promising a top-level menu position.
-- [ ] A user can open the relevant system Services settings from GoGrip.
+- [ ] A user can open the relevant system Services settings from MDGrip.
 - [ ] No guidance references Finder Sync or asks the user to enable a Finder extension.
 - [ ] Tests isolate first-run and Service-registration state from the real user account.

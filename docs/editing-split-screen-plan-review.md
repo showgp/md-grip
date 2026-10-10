@@ -150,7 +150,7 @@
 ### Task 2.2 — 可拖拽分隔条
 
 - **事件监听器泄漏风险**: 计划描述了 mousedown → 注册 document mousemove/mouseup，mouseup → 注销。但未提及如果用户在 `mousedown` 后切换到另一个标签页、或按 Esc 取消拖拽、或浏览器失去焦点时，监听器是否会被清理。实际实现需在 document 上注册 `mouseleave` 或 `blur` 兜底清理。⚠️ 次要
-- **sessionStorage API**: 计划写的是 `sessionStorage("go-grip-split-ratio")`，应为 `sessionStorage.setItem("go-grip-split-ratio", ...)`。这是伪代码简写，非实际代码。✅（文档层面可接受）
+- **sessionStorage API**: 计划写的是 `sessionStorage("md-grip-split-ratio")`，应为 `sessionStorage.setItem("md-grip-split-ratio", ...)`。这是伪代码简写，非实际代码。✅（文档层面可接受）
 - **`preview.style.flex = "1"`**: 拖拽后的恢复。如果用户拖拽后隐藏预览（no-preview），再展开，百分比会被重置。计划应明确展开时是否恢复 sessionStorage 中的比例。⚠️ 次要
 
 ---

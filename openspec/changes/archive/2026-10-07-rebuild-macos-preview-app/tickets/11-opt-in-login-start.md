@@ -37,7 +37,7 @@ Proposal source: ../proposal.md
 
 ### Current surface and genuine prerequisites
 
-发布时只读盘点：`AppDelegate.swift` 强持有唯一 `PreviewAppModel`、协调器、Services provider、popover 与共享 `AppAlertPresenter`；`Views/PopoverView.swift` 已有运行/最近区域、失败清单及显式 Open/Stop All/Quit 控制。当前 `macos/GoGrip`、行为测试和唯一工程没有 `SMAppService`/`ServiceManagement` 登录实现。它们是新增能力，不把旧示例、SDK 类型存在或规划描述当成已完成 API。
+发布时只读盘点：`AppDelegate.swift` 强持有唯一 `PreviewAppModel`、协调器、Services provider、popover 与共享 `AppAlertPresenter`；`Views/PopoverView.swift` 已有运行/最近区域、失败清单及显式 Open/Stop All/Quit 控制。当前 `macos/MDGrip`、行为测试和唯一工程没有 `SMAppService`/`ServiceManagement` 登录实现。它们是新增能力，不把旧示例、SDK 类型存在或规划描述当成已完成 API。
 
 - 真正宿主前置为 [09](09-recent-target-panel.md)，已满足。5.3 与 5.1/5.2 同属 tasks 第 5 组，不因相邻编号把 10 整票完成变成系统注册行为的硬前置；10 也不依赖 11。新增文本仍必须对接同一标准资源约定，实施前重读 10 当时的实际资源/调用点，不预定另一会话尚未创建的接口。具体共享文件需要协调时先明确边界，不擅自覆盖 10 的工作，也不另造翻译框架规避集成。
 - 08 网络共享缺口不作为本票登录选项的硬前置；08/3.3 保持未完成，本票不替代真实卷访问、完整候选或跨平台证明。若后续证据否定已批准内置工具路线，仍按原设计停止相关集成并请求裁决。
@@ -54,7 +54,7 @@ Proposal source: ../proposal.md
 
 ### Non-goals
 
-不新增独立管理窗口/设置中心、语言开关或高级参数；不重写历史/批次/会话、迁移或清理旧 `go-grip-history`、清全域 UserDefaults、自动恢复/重试/重连；不更改 Services 启用偏好/TCC、不要求 FDA/辅助功能/自动化；不注册其他应用或按进程名清扫。不重做 10 完整语言/引导、08 网络共享、12 universal/archive/DMG/CI、13 候选/支持环境矩阵，不新增 API/资源存在或纯调用转发测试。不提交/推送、发布 Release、同步主规格、归档或正式签名公证。
+不新增独立管理窗口/设置中心、语言开关或高级参数；不重写历史/批次/会话、迁移或清理旧 `md-grip-history`、清全域 UserDefaults、自动恢复/重试/重连；不更改 Services 启用偏好/TCC、不要求 FDA/辅助功能/自动化；不注册其他应用或按进程名清扫。不重做 10 完整语言/引导、08 网络共享、12 universal/archive/DMG/CI、13 候选/支持环境矩阵，不新增 API/资源存在或纯调用转发测试。不提交/推送、发布 Release、同步主规格、归档或正式签名公证。
 
 ## Scoped TDD and actual verification
 
@@ -62,7 +62,7 @@ Proposal source: ../proposal.md
 
 - 5.3 要求的消费者回归仅围绕**用户选择没有变成假成功**：注册/注销被拒绝时，界面结果仍对应实际系统状态并有失败原因；注册后需批准时不被显示为已启用，并有可用指导。使用最小受控系统操作 seam 和确定性完成事件，断言消费状态/失败结果，不仅断言 SDK 方法调用、enum/参数复制、mock echo、文案、默认值或 UI wiring。具体测试边界在实施前批准，不为构造边界新增通用状态/存储框架。
 - 既有身份/批次/owner/历史回归复用，不重复矩阵。隔离测试不得改变用户实际登录项或默认存储；受新增 UI 文本影响的纯措辞/实现测试删除，不重钉翻译文字。
-- 运行受影响的现有 Swift 行为检查及真实 App 构建，Go 无改动不重跑已知 errcheck；声明/编译/status 模拟不能代替下表 native 操作。证据记录确切 App 路径、代码身份、系统原状态、用户动作、实际 status 和恢复结果，不把同 bundle ID 的其他副本或独立 Swift 脚本的 `mainApp` 当作 GoGrip。
+- 运行受影响的现有 Swift 行为检查及真实 App 构建，Go 无改动不重跑已知 errcheck；声明/编译/status 模拟不能代替下表 native 操作。证据记录确切 App 路径、代码身份、系统原状态、用户动作、实际 status 和恢复结果，不把同 bundle ID 的其他副本或独立 Swift 脚本的 `mainApp` 当作 MDGrip。
 
 | Actual native scenario | 必须观察的证据 |
 |---|---|
@@ -98,13 +98,13 @@ Proposal source: ../proposal.md
 
 - 关闭：2026-10-06，状态 `done`；12 项验收全部按实际证据通过。实施批准：用户显式批准本票范围（5.3 一体）、S1 单 scoped TDD seam、native smoke 与具体环境操作（`/Applications` 替换并备份、真实注册/注销、System Settings 登录项条目核对/移除、全局 `AppleLanguages` 轻量切换并还原、真实 Finder Services 调用、必要时带标注受控构建）。
 - 范围裁决（用户批准，2026-10-06）：实测本机从未注册的主 App 返回 `SMAppService.Status.notFound`（rawValue 3）而非 `.notRegistered`，且该状态下 `register()` 成功、注销后状态变 `.notRegistered`。据此 `.notFound` 与 `.notRegistered` 同作“未注册”呈现（`Not set` + `Turn On`），真实结果以 `register()` 返回/抛错后重读的系统状态为准；票面“One truthful system-backed option”该句与验收第 5 项已按裁决同步修订，实现与该修订一致。
-- 变更面：新增 `macos/GoGrip/Services/LoginItemRegistering.swift`（协议 + `MainAppLoginItem`）；修改 `macos/GoGrip/PreviewAppModel.swift`（注入 `loginItem`、`loginItemStatus` 于 init 读取、`refreshLoginItemStatus`、`setLoginItemEnabled`（真实 SDK 调用后重读；抛错发布一次既有根级报告）、`openLoginItemsSettings`）、`macos/GoGrip/Views/PopoverView.swift`（登录行：状态文本、`Turn On`/`Turn Off`、`requiresApproval` 指导与 `Open Login Items…`）、`macos/GoGrip/AppDelegate.swift`（注入 `MainAppLoginItem`、面板打开时刷新、`togglePopover` 主 actor 标注）、`macos/GoGrip/en.lproj/Localizable.strings` 与 `zh-Hans.lproj/Localizable.strings`（+10 键，两表各 63 键对齐）、`macos/GoGrip.xcodeproj/project.pbxproj`（新源文件进入 app/test 两个 target 与 Services 组）、`macos/GoGripTests/PreviewAppModelTests.swift`（+3 回归、`ControlledLoginItem`、23 处 `PreviewAppModel(...)` 调用点注入）、`macos/GoGripTests/FinderServiceProviderTests.swift`（注入）、`README.md`、`docs/ARCHITECTURE.md`、`docs/HANDOVER.md`、本票（批准修订）。
+- 变更面：新增 `macos/MDGrip/Services/LoginItemRegistering.swift`（协议 + `MainAppLoginItem`）；修改 `macos/MDGrip/PreviewAppModel.swift`（注入 `loginItem`、`loginItemStatus` 于 init 读取、`refreshLoginItemStatus`、`setLoginItemEnabled`（真实 SDK 调用后重读；抛错发布一次既有根级报告）、`openLoginItemsSettings`）、`macos/MDGrip/Views/PopoverView.swift`（登录行：状态文本、`Turn On`/`Turn Off`、`requiresApproval` 指导与 `Open Login Items…`）、`macos/MDGrip/AppDelegate.swift`（注入 `MainAppLoginItem`、面板打开时刷新、`togglePopover` 主 actor 标注）、`macos/MDGrip/en.lproj/Localizable.strings` 与 `zh-Hans.lproj/Localizable.strings`（+10 键，两表各 63 键对齐）、`macos/MDGrip.xcodeproj/project.pbxproj`（新源文件进入 app/test 两个 target 与 Services 组）、`macos/MDGripTests/PreviewAppModelTests.swift`（+3 回归、`ControlledLoginItem`、23 处 `PreviewAppModel(...)` 调用点注入）、`macos/MDGripTests/FinderServiceProviderTests.swift`（注入）、`README.md`、`docs/ARCHITECTURE.md`、`docs/HANDOVER.md`、本票（批准修订）。
 - Scoped TDD 证据（批准 seam S1）：red 为 `cannot find type 'LoginItemRegistering' in scope` 与 `extra argument 'loginItem' in call`；实现后 3 项转绿——被拒 register、被拒 unregister 各保持系统真实状态并恰好发布一次含系统原因的失败；register 成功但需批准时呈 `requiresApproval`、非 enabled 且不发布失败。变异检验：把“重读真实状态”改为“假定请求生效”后 3 项全部失败，源码已还原。未新增 SDK 调用、enum/文案复制、默认值、资源存在或 wiring 断言。
 - 自动检查（最终树）：`make macos-test` **95 tests / 0 failures**（92 → 95）；`make macos` Release `BUILD SUCCEEDED` + `codesign --verify --deep --strict` 通过；产物为 universal、链接 ServiceManagement、含 en/zh-Hans 四份资源；`plutil -lint` 与两表键对齐通过。Go 零改动，未重跑已知 errcheck。
-- 真实 smoke（2026-10-06，本机 macOS 27.0.1；最终开发构建 CDHash `d22aee2e…` 安装于 `/Applications`，10 构建 `3949aca2…` 备份于 `~/Desktop/GoGrip-backups/GoGrip-10-backup.app`）：首次未注册状态面板显示 `Not set` + `Turn On`，启动/打开面板不自行注册（BTM 无 GoGrip 条目）；真实 `Turn On` → 状态重读 `Enabled`，`sfltool dumpbtm` 条目 `GoGrip / Type: app / Disposition: [enabled, allowed, notified] / Identifier 2.com.showgp.GoGrip / URL /Applications/GoGrip.app`，`Turn Off` → `Not set`；用户在 System Settings 登录项中实际移除条目后冷启动仍为 `Not set`（状态由系统事实驱动，不假成功）；**登录项关闭、宿主未运行**的真实 Finder Services 调用由 launchd 冷启动宿主（PID 86023，PPID=1）+ owned child 86035（`--managed … -r -- /tmp/gogrip-11-smoke`，127.0.0.1:64631，正文 `cold-start-marker-11 unique`）并打开默认浏览器；活动会话期间 `Turn On` 不改变 PID/端口/URL 与最近记录，关闭面板继续服务，面板 Quit 释放宿主与 owned PID/端口且 BTM 仍保留用户注册（退出不注销），独立 CLI（6419）在 App 退出前后 HTTP 200 与自身内容不变。
+- 真实 smoke（2026-10-06，本机 macOS 27.0.1；最终开发构建 CDHash `d22aee2e…` 安装于 `/Applications`，10 构建 `3949aca2…` 备份于 `~/Desktop/MDGrip-backups/MDGrip-10-backup.app`）：首次未注册状态面板显示 `Not set` + `Turn On`，启动/打开面板不自行注册（BTM 无 MDGrip 条目）；真实 `Turn On` → 状态重读 `Enabled`，`sfltool dumpbtm` 条目 `MDGrip / Type: app / Disposition: [enabled, allowed, notified] / Identifier 2.com.showgp.MDGrip / URL /Applications/MDGrip.app`，`Turn Off` → `Not set`；用户在 System Settings 登录项中实际移除条目后冷启动仍为 `Not set`（状态由系统事实驱动，不假成功）；**登录项关闭、宿主未运行**的真实 Finder Services 调用由 launchd 冷启动宿主（PID 86023，PPID=1）+ owned child 86035（`--managed … -r -- /tmp/mdgrip-11-smoke`，127.0.0.1:64631，正文 `cold-start-marker-11 unique`）并打开默认浏览器；活动会话期间 `Turn On` 不改变 PID/端口/URL 与最近记录，关闭面板继续服务，面板 Quit 释放宿主与 owned PID/端口且 BTM 仍保留用户注册（退出不注销），独立 CLI（6419）在 App 退出前后 HTTP 200 与自身内容不变。
 - 受控补证（明确标注并还原）：临时受控构建 `667481e7…`（适配器仅报告 `.requiresApproval` 并抛 `NSError(domain: "SMAppServiceErrorDomain", code: 1)`）观察到 `Waiting for approval` + 指导 + `Open Login Items…`/`Turn Off`；按 `Turn Off` 得到一次根提示（`Launch at login` / `Could not change the login startup setting: The operation couldn’t be completed. (SMAppServiceErrorDomain error 1.)`）且面板保持真实状态与可查看失败行；`Open Login Items…` 实际打开 System Settings 的 Login Items 面板。源码还原后重建 CDHash 复现 `d22aee2e…`；不冒充真实系统拒绝或审批成功。
 - 语言表面：zh-Hans 真实面板 `登录时启动 / 已开启 / 未开启`（关闭按钮可用），受控构建的批准指导与失败包装为中文且系统原因原文保留；不支持语言（ja）回退英文；全局 `AppleLanguages` 已还原 `en-US`。
-- 环境与数据还原：登录项未注册（用户在 System Settings 确认无 GoGrip 条目）、System Settings 窗口关闭；临时目标、AX/点击脚本、截图与源码备份清理；App 自有 `go-grip-first-use-guidance-shown` 与 `go-grip-recent-targets-v1` 恢复为会话前缺失状态；旧 `go-grip-history`、Services 偏好、TCC 与其他应用登录项未动。
+- 环境与数据还原：登录项未注册（用户在 System Settings 确认无 MDGrip 条目）、System Settings 窗口关闭；临时目标、AX/点击脚本、截图与源码备份清理；App 自有 `md-grip-first-use-guidance-shown` 与 `md-grip-recent-targets-v1` 恢复为会话前缺失状态；旧 `md-grip-history`、Services 偏好、TCC 与其他应用登录项未动。
 - 独立只读审阅：Standards **0 阻塞 / 0 advisory / 0 scope**（3 项新测试各自对应不同被拒/批准结果并断言保留的系统状态与失败报告；未发现未加范围或实现耦合断言）；Spec **0 阻塞 / 0 advisory / 0 scope**（mapped scenarios 由实现与证据覆盖，受控与缺环境边界如实保留）。两轴 worst severity 均为 none，无未决范围裁决。
 - 保留的 advisory/限制：`requiresApproval` 与操作失败仅为受控补证（本轮无真实系统拒绝/审批成功）；未执行真实注销/重启登录会话的自动启动观察，不宣称已验证；候选包/Intel/macOS 13（12/13）与 08 网络卷缺口不属本票。
 - tasks.md：本票完整交付并验证 **5.3** 并勾选；其他任务（含 08/3.3、12/13 及 6.x/7.x）与本票无关，未代勾、未关闭其他票。

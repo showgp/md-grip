@@ -17,8 +17,8 @@ import (
 
 	chroma_html "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/alecthomas/chroma/v2/styles"
-	"github.com/showgp/go-grip/defaults"
-	"github.com/showgp/go-grip/internal/hotreload"
+	"github.com/showgp/md-grip/defaults"
+	"github.com/showgp/md-grip/internal/hotreload"
 )
 
 const maxEditSize = 10 << 20 // 10MB

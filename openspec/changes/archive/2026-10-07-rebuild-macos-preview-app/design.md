@@ -6,7 +6,7 @@
 
 当前实现的约束：
 
-- `macos/GoGrip/` 是有缺陷的示例。主 plist 未声明 Services；工程仍嵌入 Finder Sync。旧进程管理以原始路径为键，丢弃 stderr，启动超时或 EOF 回退到 6419；不能保留这些行为。
+- `macos/MDGrip/` 是有缺陷的示例。主 plist 未声明 Services；工程仍嵌入 Finder Sync。旧进程管理以原始路径为键，丢弃 stderr，启动超时或 EOF 回退到 6419；不能保留这些行为。
 - `internal/server.go` 已能解析目录/文件、生成带初始文章路径的 URL，并通过 `--json` 输出启动信息，但输出发生在进入 HTTP 服务循环之前。`Stop()` 只关闭 listener；热重载失败只写日志。
 - `internal/listener.go` 当前绑定 `:port`，展示 URL 中的 `localhost` 不限制实际监听。宿主集成必须显式指定真实回环监听地址。
 - `macos/project.yml` 与已提交的 Xcode 工程是两个配置来源；实际 Make/CI 使用后者。Go 构建脚本已合并两种架构，但不能据此认定宿主也是 universal。
@@ -32,7 +32,7 @@
 
 ### 1. AppKit 管生命周期，SwiftUI 只渲染面板
 
-采用 AppKit 入口与 `NSApplicationDelegate`，由强持有的应用根对象创建协调器、Services provider、`NSStatusItem` 和 `NSPopover`；面板用 `NSHostingController` 承载 SwiftUI。主 plist 设置 `LSUIElement = true`，保留 bundle ID `com.showgp.GoGrip`。不保留旧的空 Settings scene，不建立管理主窗口。
+采用 AppKit 入口与 `NSApplicationDelegate`，由强持有的应用根对象创建协调器、Services provider、`NSStatusItem` 和 `NSPopover`；面板用 `NSHostingController` 承载 SwiftUI。主 plist 设置 `LSUIElement = true`，保留 bundle ID `com.showgp.MDGrip`。不保留旧的空 Settings scene，不建立管理主窗口。
 
 协调器在注册 provider 前完成初始化；通过 `NSApp.servicesProvider` 注册服务后立即可接收请求，不等待首次弹出面板。AppKit 的 provider 文档明确服务请求可能在注册后、launch 回调结束前到达，因此不能将面板初始化当作 Services 初始化。关闭 popover 只影响显示。
 
@@ -46,9 +46,9 @@ UI 与状态变更由一个 `@MainActor` 协调器负责，SwiftUI 使用 macOS 
 
 | 键 | 值/约定 |
 |---|---|
-| `NSMessage` | `openWithGoGrip`，provider 暴露 `openWithGoGrip:userData:error:` |
-| `NSPortName` | `GoGrip`，与应用名一致 |
-| `NSMenuItem.default` | `Open with GoGrip` |
+| `NSMessage` | `openWithMDGrip`，provider 暴露 `openWithMDGrip:userData:error:` |
+| `NSPortName` | `MDGrip`，与应用名一致 |
+| `NSMenuItem.default` | `Open with MDGrip` |
 | `NSSendTypes` | `public.file-url` |
 | `NSRequiredContext.NSApplicationIdentifier` | `com.apple.finder` |
 
@@ -56,7 +56,7 @@ UI 与状态变更由一个 `@MainActor` 协调器负责，SwiftUI 使用 macOS 
 
 selector 同步取得 URL 值，交给协调器后返回；确认、启动和最终错误提示异步进行，不在 Services 调用中阻塞整个批次。`error` 指针只在 selector 返回前用于无法读取请求等即时错误，不能捕获到异步任务中。`NSOpenPanel` 同时允许目录与文件、多选，手动入口和最近记录也进入同一个目标处理路径。
 
-`en.lproj/ServicesMenu.strings` 与 `zh-Hans.lproj/ServicesMenu.strings` 均以 plist 的精确默认字符串 `Open with GoGrip` 为键；普通 `Localizable.strings` 不代替 Services 菜单本地化。首次引导解释菜单与系统设置，提供再次查看入口。可调用 `NSUpdateDynamicServices()` 请求重扫声明，但不修改用户启用偏好，不把调用成功当成菜单出现的证明。
+`en.lproj/ServicesMenu.strings` 与 `zh-Hans.lproj/ServicesMenu.strings` 均以 plist 的精确默认字符串 `Open with MDGrip` 为键；普通 `Localizable.strings` 不代替 Services 菜单本地化。首次引导解释菜单与系统设置，提供再次查看入口。可调用 `NSUpdateDynamicServices()` 请求重扫声明，但不修改用户启用偏好，不把调用成功当成菜单出现的证明。
 
 **替代方案：** Finder Sync 已被产品决策排除；只用文件 UTI 过滤菜单不能代替运行时分类，且会让混合选择的实际错误被系统菜单条件掩盖。使用 file URL 输入，应用统一确认目标类型。
 
@@ -114,7 +114,7 @@ managed stdout 专用于 UTF-8 NDJSON；普通日志与诊断写 stderr。协议
 
 Go 先确认目标可访问、建立处理器、绑定 listener 并启动 HTTP 服务，再发 ready；watcher 尚在初始扫描时可报告 `pending`，不阻塞所有权监视。单文件初始路径沿用现有 URL escaping，不能丢失中文、空格或文章路由。
 
-managed 服务提供一个仅供启动确认的固定路由 `/__gogrip/ready`：返回 204 及 `X-GoGrip-Generation`，不访问目标目录、不执行 Markdown 渲染。收到 ready 后，宿主校验 URL 是本代次的 HTTP 回环地址，再对同一 origin 的该路由做一次 HEAD，确认代次匹配、HTTP 可响应及对应进程未退出；随后才显示 running 和请求默认浏览器打开实际 URL。不接受跳转到其他 origin，不增加周期健康轮询。
+managed 服务提供一个仅供启动确认的固定路由 `/__mdgrip/ready`：返回 204 及 `X-MDGrip-Generation`，不访问目标目录、不执行 Markdown 渲染。收到 ready 后，宿主校验 URL 是本代次的 HTTP 回环地址，再对同一 origin 的该路由做一次 HEAD，确认代次匹配、HTTP 可响应及对应进程未退出；随后才显示 running 和请求默认浏览器打开实际 URL。不接受跳转到其他 origin，不增加周期健康轮询。
 
 启动从成功创建子进程起使用 15 秒内部期限，覆盖机器反馈和一次 HTTP 确认；超时按启动失败清理，不请求默认端口。这个数值是初始工程设置，不提供配置 UI，不对阻塞的内核文件操作承诺精确时间；若实际验收需要调整，只调整实现参数，不改变超时失败的语义。
 
@@ -160,9 +160,9 @@ managed Go 在任何目标解析、网络卷读取、watcher 或 listener 创建
 
 ### 10. 单一工程来源与自包含候选包
 
-以已提交的 `macos/GoGrip.xcodeproj` 为唯一工程定义，沿用当前 Make/CI 的构建入口；切换时移除未被流水线使用的 `macos/project.yml`，避免旧 generator 再生成 Finder Sync，不新增 XcodeGen 依赖。项目仅保留宿主与行为测试目标，移除旧扩展及嵌入阶段。
+以已提交的 `macos/MDGrip.xcodeproj` 为唯一工程定义，沿用当前 Make/CI 的构建入口；切换时移除未被流水线使用的 `macos/project.yml`，避免旧 generator 再生成 Finder Sync，不新增 XcodeGen 依赖。项目仅保留宿主与行为测试目标，移除旧扩展及嵌入阶段。
 
-宿主显式构建 `arm64 x86_64`、`ONLY_ACTIVE_ARCH=NO`、deployment target 13.0。Go 脚本构建 darwin arm64/amd64，使用现有工具链及 `CGO_ENABLED=0`，再合并两种架构。内置工具放入 `Contents/MacOS/go-grip`，宿主只从该确定位置加载；不从 Resources、PATH 或源码回退，不在运行时 chmod 修改包内容。
+宿主显式构建 `arm64 x86_64`、`ONLY_ACTIVE_ARCH=NO`、deployment target 13.0。Go 脚本构建 darwin arm64/amd64，使用现有工具链及 `CGO_ENABLED=0`，再合并两种架构。内置工具放入 `Contents/MacOS/md-grip`，宿主只从该确定位置加载；不从 Resources、PATH 或源码回退，不在运行时 chmod 修改包内容。
 
 候选包采用本地 ad-hoc 签名：先给内置工具独立 code identifier 签名，再由 Xcode 签宿主 bundle，验证签名结构；不需要 Developer ID 私钥或公证凭据。ad-hoc 只是本地运行签名，不解决跨版本 TCC 身份稳定性，也不满足正式分发标准。现有全局 `CODE_SIGNING_ALLOWED=NO` 构建覆盖需随候选路径更新。
 

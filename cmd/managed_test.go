@@ -29,7 +29,7 @@ const (
 	ownerHelperTarget = "GOGP_TEST_OWNER_TARGET"
 )
 
-// managedBinary is the real go-grip executable built once for the process-level
+// managedBinary is the real md-grip executable built once for the process-level
 // managed contract tests.
 var managedBinary string
 
@@ -38,16 +38,16 @@ func TestMain(m *testing.M) {
 		os.Exit(m.Run())
 	}
 
-	dir, err := os.MkdirTemp("", "go-grip-managed-tests")
+	dir, err := os.MkdirTemp("", "md-grip-managed-tests")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "create test bin dir:", err)
 		os.Exit(1)
 	}
-	bin := filepath.Join(dir, "go-grip")
-	build := exec.Command("go", "build", "-o", bin, "github.com/showgp/go-grip")
+	bin := filepath.Join(dir, "md-grip")
+	build := exec.Command("go", "build", "-o", bin, "github.com/showgp/md-grip")
 	build.Stderr = os.Stderr
 	if err := build.Run(); err != nil {
-		fmt.Fprintln(os.Stderr, "build go-grip:", err)
+		fmt.Fprintln(os.Stderr, "build md-grip:", err)
 		_ = os.RemoveAll(dir)
 		os.Exit(1)
 	}
@@ -83,7 +83,7 @@ func TestManagedDirectoryPreviewServesContentAndStops(t *testing.T) {
 	writeProcessDoc(t, filepath.Join(root, "README.md"), "# Root directory marker\n")
 	writeProcessDoc(t, filepath.Join(root, "nested", "note.md"), "# Nested directory marker\n")
 
-	child := startGoGrip(t, "--managed", "gen-dir", "-r", "--", root)
+	child := startMDGrip(t, "--managed", "gen-dir", "-r", "--", root)
 	ready := child.nextEvent(t, 10*time.Second)
 
 	if ready.Version != 1 || ready.Event != "ready" || ready.Generation != "gen-dir" {
@@ -120,11 +120,11 @@ func TestManagedDirectoryPreviewServesContentAndStops(t *testing.T) {
 		t.Fatalf("published URL = %d %q, want a rendered page", status, body)
 	}
 
-	readiness := httpRequest(t, http.MethodHead, base+"/__gogrip/ready")
+	readiness := httpRequest(t, http.MethodHead, base+"/__mdgrip/ready")
 	if readiness.StatusCode != http.StatusNoContent {
 		t.Fatalf("readiness status = %d, want 204", readiness.StatusCode)
 	}
-	if got := readiness.Header.Get("X-GoGrip-Generation"); got != "gen-dir" {
+	if got := readiness.Header.Get("X-MDGrip-Generation"); got != "gen-dir" {
 		t.Fatalf("readiness generation = %q, want %q", got, "gen-dir")
 	}
 	_ = readiness.Body.Close()
@@ -150,7 +150,7 @@ func TestManagedSingleFileWithSpacesAndNonASCII(t *testing.T) {
 	writeProcessDoc(t, filepath.Join(dir, "说明 文档.md"), "# 单文件标记\n")
 	writeProcessDoc(t, filepath.Join(dir, "other.md"), "# 其他文章标记\n")
 
-	child := startGoGrip(t, "--managed", "gen-file", "--", filepath.Join(dir, "说明 文档.md"))
+	child := startMDGrip(t, "--managed", "gen-file", "--", filepath.Join(dir, "说明 文档.md"))
 	ready := child.nextEvent(t, 10*time.Second)
 	if ready.Event != "ready" {
 		t.Fatalf("unexpected event %+v (stderr: %s)", ready, child.stderr.String())
@@ -186,7 +186,7 @@ func TestManagedEmptyDirectoryPublishesServingReady(t *testing.T) {
 
 	root := t.TempDir()
 
-	child := startGoGrip(t, "--managed", "gen-empty", "-r", "--", root)
+	child := startMDGrip(t, "--managed", "gen-empty", "-r", "--", root)
 	ready := child.nextEvent(t, 10*time.Second)
 	if ready.Event != "ready" {
 		t.Fatalf("unexpected event %+v (stderr: %s)", ready, child.stderr.String())
@@ -206,7 +206,7 @@ func TestManagedStartupFailureEmitsFatalWithoutReady(t *testing.T) {
 	t.Parallel()
 
 	missing := filepath.Join(t.TempDir(), "missing-target")
-	child := startGoGrip(t, "--managed", "gen-fail", "--", missing)
+	child := startMDGrip(t, "--managed", "gen-fail", "--", missing)
 
 	event := child.nextEvent(t, 10*time.Second)
 	if event.Event != "fatal" {
@@ -252,7 +252,7 @@ func TestManagedRejectsInapplicableInvocations(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			child := startGoGrip(t, tt.args...)
+			child := startMDGrip(t, tt.args...)
 			event := child.nextEvent(t, 10*time.Second)
 			if event.Event != "fatal" || event.Code != tt.code {
 				t.Fatalf("event = %+v, want fatal %q (stderr: %s)", event, tt.code, child.stderr.String())
@@ -275,7 +275,7 @@ func TestManagedOwnerLossBeforeReadyExitsBounded(t *testing.T) {
 	root := t.TempDir()
 	writeProcessDoc(t, filepath.Join(root, "README.md"), "# Early loss marker\n")
 
-	child := startGoGrip(t, "--managed", "gen-early", "-r", "--", root)
+	child := startMDGrip(t, "--managed", "gen-early", "-r", "--", root)
 	// Close the ownership pipe immediately, without waiting for readiness.
 	child.closeStdin()
 
@@ -402,8 +402,8 @@ func TestManagedStopLeavesOtherSessionsServing(t *testing.T) {
 	writeProcessDoc(t, filepath.Join(dirB, "README.md"), "# Session B marker\n")
 	writeProcessDoc(t, filepath.Join(dirC, "README.md"), "# Standalone C marker\n")
 
-	childA := startGoGrip(t, "--managed", "gen-a", "-r", "--", dirA)
-	childB := startGoGrip(t, "--managed", "gen-b", "-r", "--", dirB)
+	childA := startMDGrip(t, "--managed", "gen-a", "-r", "--", dirA)
+	childB := startMDGrip(t, "--managed", "gen-b", "-r", "--", dirB)
 	readyA := childA.nextEvent(t, 10*time.Second)
 	readyB := childB.nextEvent(t, 10*time.Second)
 	if readyA.Event != "ready" || readyB.Event != "ready" {
@@ -420,7 +420,7 @@ func TestManagedStopLeavesOtherSessionsServing(t *testing.T) {
 
 	// A standalone CLI with --json keeps its existing startup behavior and
 	// must not enter the ownership path: closing its stdin changes nothing.
-	standalone := startGoGrip(t, "--json", "--port", "0", "--browser=false", "--", dirC)
+	standalone := startMDGrip(t, "--json", "--port", "0", "--browser=false", "--", dirC)
 	infoLine := standalone.nextLine(t, 10*time.Second)
 	var info struct {
 		Port int    `json:"port"`
@@ -468,7 +468,7 @@ func TestManagedEmptyRootReloadsNewDocument(t *testing.T) {
 
 	root := t.TempDir()
 
-	child := startGoGrip(t, "--managed", "gen-watch", "-r", "--", root)
+	child := startMDGrip(t, "--managed", "gen-watch", "-r", "--", root)
 	ready := child.nextEvent(t, 10*time.Second)
 	if ready.Event != "ready" || ready.Reload == nil {
 		t.Fatalf("first event = %+v, want ready with a reload snapshot (stderr: %s)", ready, child.stderr.String())
@@ -540,7 +540,7 @@ func TestManagedDegradedWatchStillServesAndRefreshes(t *testing.T) {
 	doc := filepath.Join(root, "README.md")
 	writeProcessDoc(t, doc, "# Degraded initial marker\n")
 
-	child := startGoGripWithNoFileLimit(t, 128, "--managed", "gen-degraded", "-r", "--", root)
+	child := startMDGripWithNoFileLimit(t, 128, "--managed", "gen-degraded", "-r", "--", root)
 	ready := child.nextEvent(t, 10*time.Second)
 	if ready.Event != "ready" || ready.Reload == nil {
 		t.Fatalf("first event = %+v, want ready with a reload snapshot (stderr: %s)", ready, child.stderr.String())
@@ -596,7 +596,7 @@ func TestManagedAccessibleRootWithUnreadableSubtreeServesReadableContent(t *test
 		t.Skip("directory permissions are not enforced for this user")
 	}
 
-	child := startGoGrip(t, "--managed", "gen-partial-tree", "-r", "--", root)
+	child := startMDGrip(t, "--managed", "gen-partial-tree", "-r", "--", root)
 	ready := child.nextEvent(t, 10*time.Second)
 	if ready.Event != "ready" {
 		t.Fatalf("first event = %+v, want ready (stderr: %s)", ready, child.stderr.String())
@@ -678,7 +678,7 @@ func TestManagedSingleFileReportsUnavailableAndRecovery(t *testing.T) {
 	doc := filepath.Join(dir, "doc.md")
 	writeProcessDoc(t, doc, "# Single file marker\n")
 
-	child := startGoGrip(t, "--managed", "gen-file-loss", "--", doc)
+	child := startMDGrip(t, "--managed", "gen-file-loss", "--", doc)
 	ready := child.nextEvent(t, 10*time.Second)
 	if ready.Event != "ready" {
 		t.Fatalf("first event = %+v, want ready (stderr: %s)", ready, child.stderr.String())
@@ -754,18 +754,18 @@ type childProcess struct {
 	exitErr error
 }
 
-func startGoGrip(t *testing.T, args ...string) *childProcess {
+func startMDGrip(t *testing.T, args ...string) *childProcess {
 	t.Helper()
 
 	return startChild(t, exec.Command(managedBinary, args...))
 }
 
-// startGoGripWithNoFileLimit starts the real binary through a shell that lowers
+// startMDGripWithNoFileLimit starts the real binary through a shell that lowers
 // the soft descriptor limit first. On kqueue platforms the hot-reload watch
 // budget derives from RLIMIT_NOFILE, so a low limit forces a degraded watch set
 // with a real process. The shell execs the binary, so ownership and lifecycle
 // semantics stay those of a directly started process.
-func startGoGripWithNoFileLimit(t *testing.T, limit int, args ...string) *childProcess {
+func startMDGripWithNoFileLimit(t *testing.T, limit int, args ...string) *childProcess {
 	t.Helper()
 
 	script := fmt.Sprintf("ulimit -n %d; exec \"$0\" \"$@\"", limit)

@@ -1,3 +1,0 @@
-/* Finder Services menu name — English (development region).
-   The key is the exact NSMenuItem.default value in Info.plist. */
-"Open with GoGrip" = "Open with GoGrip";

@@ -1,5 +1,6 @@
 MIT License
 
+Copyright (c) 2026 showgp
 Copyright (c) 2024 Christoph Herb
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,3 +20,9 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+This project is derived from chrishrb/go-grip (https://github.com/chrishrb/go-grip); the copyright notice of the original project is retained above.
+
+Vendored third-party frontend assets under defaults/static/ — marked (MIT), mermaid (MIT) and MathJax (Apache-2.0) — remain under their own licenses; the license and copyright notices inside the respective files are authoritative.

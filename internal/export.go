@@ -13,7 +13,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/showgp/go-grip/defaults"
+	"github.com/showgp/md-grip/defaults"
 )
 
 // ExportData carries the data used by the export template (templates/export.html).

@@ -271,7 +271,7 @@ This requires a small `responseSniffer` helper in the same file. See `aarol/relo
 
 **Add** import:
 ```go
-"github.com/showgp/go-grip/internal/hotreload"
+"github.com/showgp/md-grip/internal/hotreload"
 ```
 
 **Replace** the reload setup block (lines 83–100) with:
@@ -385,8 +385,8 @@ This is acceptable. The Toast auto-removes after 1.5–3 seconds. If the user is
 	originalContent = content;
 	isDirty = false;
 	saveSidebarState();
-	sessionStorage.setItem("go-grip-scrollTop", document.documentElement.scrollTop.toString());
-	sessionStorage.setItem("go-grip-editor-saved", "true");
+	sessionStorage.setItem("md-grip-scrollTop", document.documentElement.scrollTop.toString());
+	sessionStorage.setItem("md-grip-editor-saved", "true");
 	showToast("Saved", "success");
 	setTimeout(function () {
 		window.location.reload();
@@ -428,11 +428,11 @@ Remove `sessionStorage` lines for `scrollTop` and `editor-saved` — they were o
 
 **Remove** from `restoreScrollPosition()` (lines 391–403):
 ```javascript
-sessionStorage.removeItem("go-grip-editor-saved");
+sessionStorage.removeItem("md-grip-editor-saved");
 ```
-This line becomes unnecessary since we never set `go-grip-editor-saved` anymore.
+This line becomes unnecessary since we never set `md-grip-editor-saved` anymore.
 
-**Keep** `restoreScrollPosition()` for regular page navigations (sidebar links) — the `go-grip-scrollTop` set/remove flow still applies there.
+**Keep** `restoreScrollPosition()` for regular page navigations (sidebar links) — the `md-grip-scrollTop` set/remove flow still applies there.
 
 ---
 

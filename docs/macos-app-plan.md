@@ -1,4 +1,4 @@
-# GoGrip macOS 状态栏 App 实现方案
+# MDGrip macOS 状态栏 App 实现方案
 
 > 状态（2026-10-05）：本文是旧示例 App 的设计记录，其拖拽/历史/Finder Sync/嵌入 Resources 方案已被替换（旧历史存储源与测试已随任务 09 移除，用户旧 50 项数据保留但不被新宿主读取）；当前宿主按 `openspec/changes/rebuild-macos-preview-app` 重建，能力与边界以 `docs/ARCHITECTURE.md` 第七节和 `README.md` 为准。
 
@@ -10,7 +10,7 @@
 
 ## 一、项目概述
 
-在 macOS 状态栏（菜单栏）放置一个轻量 App，嵌入 go-grip 二进制，用户通过拖拽目录/.md 文件快速打开预览，并管理历史打开记录。
+在 macOS 状态栏（菜单栏）放置一个轻量 App，嵌入 md-grip 二进制，用户通过拖拽目录/.md 文件快速打开预览，并管理历史打开记录。
 
 ### 核心价值
 
@@ -37,11 +37,11 @@
 **Swift/AppKit (NSStatusItem + NSPopover) + 嵌入 Go 二进制子进程**
 
 - Swift 层：状态栏图标、NSPopover 面板、拖拽接收、历史管理、进程管理
-- Go 层：go-grip 新增 `--json` 输出模式，作为子进程启动，负责 Markdown 渲染 + 浏览器打开
+- Go 层：md-grip 新增 `--json` 输出模式，作为子进程启动，负责 Markdown 渲染 + 浏览器打开
 
 ---
 
-## 三、go-grip 多实例可行性确认
+## 三、md-grip 多实例可行性确认
 
 | 问题 | 结论 |
 |------|------|
@@ -55,17 +55,17 @@
 ## 四、项目结构
 
 ```
-go-grip/
+md-grip/
 ├── main.go, cmd/, internal/, pkg/    # 现有 Go 代码（新增 --json 输出模式）
 ├── macos/                             # 新增：Swift App
-│   ├── GoGrip.xcodeproj/
-│   ├── GoGrip/
-│   │   ├── GoGripApp.swift           # @main 入口
+│   ├── MDGrip.xcodeproj/
+│   ├── MDGrip/
+│   │   ├── MDGripApp.swift           # @main 入口
 │   │   ├── AppDelegate.swift          # NSStatusItem + NSPopover + 进程管理
 │   │   ├── Models/
 │   │   │   └── HistoryEntry.swift     # 历史记录数据模型
 │   │   ├── Services/
-│   │   │   └── ProcessManager.swift   # go-grip 子进程跟踪（ObservableObject）
+│   │   │   └── ProcessManager.swift   # md-grip 子进程跟踪（ObservableObject）
 │   │   ├── Views/
 │   │   │   ├── PopoverView.swift      # 主面板内容（ZStack: 历史列表 + 拖拽蒙版）
 │   │   │   ├── DropOverlayView.swift  # 拖拽蒙版（仅拖拽时显示）
@@ -74,7 +74,7 @@ go-grip/
 │   │   └── Utilities/
 │   │       └── Storage.swift          # UserDefaults 持久化
 │   ├── Info.plist                     # LSUIElement = true（无 Dock 图标）
-│   └── GoGrip.entitlements
+│   └── MDGrip.entitlements
 ├── .github/workflows/
 │   ├── build.yml                      # 现有 CI（加 macOS job）
 │   └── release.yml                    # 现有 Release（加 DMG 打包）
@@ -105,7 +105,7 @@ go-grip/
           │              │              │
           ▼              ▼              ▼
      ┌────────┐   ┌────────┐   ┌────────┐
-     │go-grip │   │go-grip │   │go-grip │  ← 子进程
+     │md-grip │   │md-grip │   │md-grip │  ← 子进程
      │:6419   │   │:6420   │   │:6421   │
      │~/docs  │   │~/notes │   │a.md    │
      └───┬────┘   └───┬────┘   └───┬────┘
@@ -121,7 +121,7 @@ go-grip/
 
 ```
 ┌─────────────────────────────┐
-│  GoGrip                 ⚙️  │
+│  MDGrip                 ⚙️  │
 ├─────────────────────────────┤
 │                             │
 │     📂                      │
@@ -140,7 +140,7 @@ go-grip/
 
 ```
 ┌─────────────────────────────┐
-│  GoGrip                 ⚙️  │
+│  MDGrip                 ⚙️  │
 ├─────────────────────────────┤
 │  📋 最近打开                 │
 │  ├── ~/docs/project     ●  │  ● 绿色 = 运行中
@@ -155,7 +155,7 @@ go-grip/
 
 ```
 ┌─────────────────────────────┐
-│  GoGrip                 ⚙️  │
+│  MDGrip                 ⚙️  │
 ├─────────────────────────────┤
 │  ╔═══════════════════════╗  │
 │  ║                       ║  │  半透明蒙版
@@ -263,7 +263,7 @@ if isRunning(path) {
   → 验证: 是目录 或 .md 文件
   → 检查 ProcessManager: 该路径是否已在运行?
     → 已运行: 用该实例的 port 调用 open http://localhost:{port} 激活浏览器
-    → 未运行: ProcessManager.start(path) → 启动 go-grip --json 子进程
+    → 未运行: ProcessManager.start(path) → 启动 md-grip --json 子进程
              → 从 stdout 读取 {"port": 6419} 获取实际端口
              → 存储 RunningInstance(path, process, port)
   → Storage.addToHistory(path) → 更新历史（已存在则移到顶部 + accessCount++）
@@ -334,18 +334,18 @@ struct HistoryEntry: Codable, Identifiable {
 struct RunningInstance {
     let path: String
     let process: Process       // Foundation.Process
-    let port: Int              // go-grip 监听的端口
+    let port: Int              // md-grip 监听的端口
     var pid: Int32 { process.processIdentifier }
 }
 ```
 
 ---
 
-## 九、go-grip `--json` 输出模式
+## 九、md-grip `--json` 输出模式
 
 ### 需求
 
-Swift App 需要知道 go-grip 子进程的实际监听端口，以便在用户点击"已运行"条目时用 `open http://localhost:{port}` 激活浏览器。
+Swift App 需要知道 md-grip 子进程的实际监听端口，以便在用户点击"已运行"条目时用 `open http://localhost:{port}` 激活浏览器。
 
 ### stdout 协议
 
@@ -360,7 +360,7 @@ Swift App 需要知道 go-grip 子进程的实际监听端口，以便在用户�
 
 ### 代码执行顺序
 
-go-grip `Serve()` 方法的实际顺序（`internal/server.go`）：
+md-grip `Serve()` 方法的实际顺序（`internal/server.go`）：
 ```
 line 104: actualPort, err := listenOnPort(...)  // 绑定端口
 line 109: initialPath, err := initialPathForTarget(...)  // 确定初始路径
@@ -462,7 +462,7 @@ if s.jsonOutput {
 
 ---
 
-## 十、go-grip 二进制嵌入与子进程启动
+## 十、md-grip 二进制嵌入与子进程启动
 
 ### Xcode Build Phase (Run Script)
 
@@ -471,11 +471,11 @@ set -euo pipefail  # 任何错误立即终止构建
 
 # 构建 universal binary (arm64 + x86_64)
 cd "${SRCROOT}/.."
-GOOS=darwin GOARCH=arm64 go build -o /tmp/go-grip-arm64 .
-GOOS=darwin GOARCH=amd64 go build -o /tmp/go-grip-amd64 .
-lipo -create /tmp/go-grip-arm64 /tmp/go-grip-amd64 \
-     -output "${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Resources/go-grip"
-chmod +x "${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Resources/go-grip"
+GOOS=darwin GOARCH=arm64 go build -o /tmp/md-grip-arm64 .
+GOOS=darwin GOARCH=amd64 go build -o /tmp/md-grip-amd64 .
+lipo -create /tmp/md-grip-arm64 /tmp/md-grip-amd64 \
+     -output "${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Resources/md-grip"
+chmod +x "${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Resources/md-grip"
 ```
 
 > 前提：构建机器需安装 Go 工具链。CI 通过 `setup-go` 处理，本地需手动安装。
@@ -485,7 +485,7 @@ chmod +x "${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Resources/go-grip"
 ```swift
 // ProcessManager.swift 中的方法
 func start(path: String) async {
-    guard let url = Bundle.main.url(forResource: "go-grip", withExtension: nil) else {
+    guard let url = Bundle.main.url(forResource: "md-grip", withExtension: nil) else {
         // 二进制不存在 → 在主线程显示错误
         return
     }
@@ -520,7 +520,7 @@ func start(path: String) async {
     instances[path] = instance
 }
 
-/// 从 go-grip stdout 逐行读取，找到 JSON 行并提取端口
+/// 从 md-grip stdout 逐行读取，找到 JSON 行并提取端口
 private func readPortFromStdout(pipe: Pipe) async -> Int {
     return await withCheckedContinuation { continuation in
         var resumed = false
@@ -595,9 +595,9 @@ private func readPortFromStdout(pipe: Pipe) async -> Int {
 
 | 场景 | 处理方式 |
 |------|----------|
-| go-grip 二进制不存在 | popover 中显示错误提示："未找到 go-grip 二进制文件" |
-| go-grip 启动失败（port 冲突等） | 弹出 Alert 提示用户 |
-| go-grip 进程意外退出 | 从 instances 移除，badge -1，可选 toast 提示 |
+| md-grip 二进制不存在 | popover 中显示错误提示："未找到 md-grip 二进制文件" |
+| md-grip 启动失败（port 冲突等） | 弹出 Alert 提示用户 |
+| md-grip 进程意外退出 | 从 instances 移除，badge -1，可选 toast 提示 |
 | 拖拽的不是目录/.md 文件 | 拖拽蒙版显示"不支持的文件类型" |
 
 ---
@@ -611,7 +611,7 @@ UserDefaults + JSON 编码
 ```swift
 // Storage.swift
 struct Storage {
-    private let key = "go-grip-history"
+    private let key = "md-grip-history"
     private let maxEntries = 50
 
     func load() -> [HistoryEntry] {
@@ -748,7 +748,7 @@ NSStatusItem 没有原生 badge API。通过在图标上叠加绘制数字实现
 func updateBadge(count: Int) {
     guard let button = statusItem.button else { return }
 
-    let image = NSImage(systemSymbolName: "doc.text", accessibilityDescription: "GoGrip")!
+    let image = NSImage(systemSymbolName: "doc.text", accessibilityDescription: "MDGrip")!
 
     if count > 0 {
         // 在图标右下角绘制红色圆形 + 数字
@@ -788,16 +788,16 @@ func updateBadge(count: Int) {
 
 ### Xcode 项目配置
 
-创建 `macos/GoGrip.xcodeproj` 时的关键设置：
+创建 `macos/MDGrip.xcodeproj` 时的关键设置：
 
 | 设置 | 值 |
 |------|-----|
 | `MACOSX_DEPLOYMENT_TARGET` | `13.0` |
-| `PRODUCT_BUNDLE_IDENTIFIER` | `com.showgp.GoGrip` |
+| `PRODUCT_BUNDLE_IDENTIFIER` | `com.showgp.MDGrip` |
 | `SWIFT_VERSION` | `5.0` |
 | `ENABLE_HARDENED_RUNTIME` | `NO`（未签名构建） |
 | `CODE_SIGN_IDENTITY` | `""`（空，不签名） |
-| `INFOPLIST_FILE` | `GoGrip/Info.plist` |
+| `INFOPLIST_FILE` | `MDGrip/Info.plist` |
 
 ### Info.plist 完整内容
 
@@ -809,17 +809,17 @@ func updateBadge(count: Int) {
     <key>LSUIElement</key>
     <true/>  <!-- 无 Dock 图标，无 App Switcher 条目 -->
     <key>CFBundleName</key>
-    <string>GoGrip</string>
+    <string>MDGrip</string>
     <key>CFBundleDisplayName</key>
-    <string>GoGrip</string>
+    <string>MDGrip</string>
     <key>CFBundleIdentifier</key>
-    <string>com.showgp.GoGrip</string>
+    <string>com.showgp.MDGrip</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>CFBundleShortVersionString</key>
     <string>1.0.0</string>
     <key>CFBundleExecutable</key>
-    <string>GoGrip</string>
+    <string>MDGrip</string>
     <key>LSMinimumSystemVersion</key>
     <string>13.0</string>
     <key>NSHighResolutionCapable</key>
@@ -828,7 +828,7 @@ func updateBadge(count: Int) {
 </plist>
 ```
 
-### GoGrip.entitlements
+### MDGrip.entitlements
 
 未签名构建不需要 entitlements 文件。如果未来需要签名/公证：
 
@@ -847,12 +847,12 @@ func updateBadge(count: Int) {
 
 ```bash
 # 方式 1: Xcode
-open macos/GoGrip.xcodeproj
+open macos/MDGrip.xcodeproj
 # Cmd+B 构建
 
 # 方式 2: 命令行
-xcodebuild -project macos/GoGrip.xcodeproj \
-  -scheme GoGrip -configuration Release \
+xcodebuild -project macos/MDGrip.xcodeproj \
+  -scheme MDGrip -configuration Release \
   CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO \
   build
 ```
@@ -875,28 +875,28 @@ build-macos-app:
       with:
         go-version: '1.26'
 
-    # 构建 Swift App（内含 go-grip universal binary）
-    - name: Build GoGrip.app
+    # 构建 Swift App（内含 md-grip universal binary）
+    - name: Build MDGrip.app
       run: |
-        xcodebuild -project macos/GoGrip.xcodeproj \
-          -scheme GoGrip -configuration Release \
+        xcodebuild -project macos/MDGrip.xcodeproj \
+          -scheme MDGrip -configuration Release \
           CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO \
-          archive -archivePath build/GoGrip.xcarchive
+          archive -archivePath build/MDGrip.xcarchive
 
     # 创建 DMG（使用系统自带 hdiutil，无需第三方工具）
     - name: Create DMG
       run: |
         mkdir -p dmg-root
-        cp -R build/GoGrip.xcarchive/Products/Applications/GoGrip.app dmg-root/
+        cp -R build/MDGrip.xcarchive/Products/Applications/MDGrip.app dmg-root/
         ln -s /Applications dmg-root/Applications
-        hdiutil create -volname "GoGrip" -srcfolder dmg-root \
-          -ov -format UDZO GoGrip.dmg
+        hdiutil create -volname "MDGrip" -srcfolder dmg-root \
+          -ov -format UDZO MDGrip.dmg
 
     # 上传到 GitHub Release
     - name: Upload DMG
       uses: softprops/action-gh-release@v2
       with:
-        files: GoGrip.dmg
+        files: MDGrip.dmg
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -921,7 +921,7 @@ build-macos-app:
 | 按钮打开 | ✅ | 单个"打开"按钮，弹出 NSOpenPanel 选择文件/目录 |
 | 历史记录 | ✅ | 最近 50 条，UserDefaults 持久化，按最近打开排序 |
 | 多实例管理 | ✅ | 每个目录独立进程，● 标记运行中，点击可关闭 |
-| 端口感知 | ✅ | go-grip 新增 `--json` 输出模式，Swift 解析实际端口 |
+| 端口感知 | ✅ | md-grip 新增 `--json` 输出模式，Swift 解析实际端口 |
 | 退出清理 | ✅ | App 退出时 kill 所有子进程 |
 | 开机自启 | ✅ | Login Items (SMAppService)，仅 macOS 13+ |
 | 错误处理 | ✅ | 二进制不存在/启动失败时弹出错误提示 |
@@ -967,14 +967,14 @@ Popover 中的 ⚙️ 按钮可弹出设置面板，包含"开机自启"开关�
 | 决策项 | 结论 | 依据 |
 |--------|------|------|
 | UI 框架 | Swift/AppKit NSStatusItem + NSPopover | 生产级方案，完全可控 |
-| 端口感知 | go-grip 新增 `--json` 输出模式 | 最准确，改动量小（+12 行 Go 代码） |
+| 端口感知 | md-grip 新增 `--json` 输出模式 | 最准确，改动量小（+12 行 Go 代码） |
 | 最低 macOS 版本 | macOS 13+ | SMAppService 开机自启需要 |
 | 状态栏图标 | SF Symbol `doc.text` + attributedTitle 数字 badge | 无需自定义图标资源 |
 | 拖拽时 popover 行为 | 阻止 dismiss，释放后恢复 | 防止拖拽过程中 popover 意外关闭 |
 | 历史记录去重 | 同一路径再次打开 → 移到顶部 + accessCount++ | 保持最近使用排序 |
 | NSOpenPanel 多选 | 不支持多选（allowsMultipleSelection = false） | V1 简化交互 |
 | Popover 宽度 | 固定 320pt | V1 简化，V2 可加可调 |
-| go-grip 改动范围 | cmd/root.go + internal/server.go（+25 行，含 stderr 重定向） | 最小侵入性 |
+| md-grip 改动范围 | cmd/root.go + internal/server.go（+25 行，含 stderr 重定向） | 最小侵入性 |
 
 ---
 
@@ -985,7 +985,7 @@ Popover 中的 ⚙️ 按钮可弹出设置面板，包含"开机自启"开关�
 | **Unit — Storage** | load/save/addToHistory（去重+排序+容量限制）/removeFromHistory/clearHistory |
 | **Unit — ProcessManager** | start/stop/stopAll/isRunning/port，terminationHandler 回调清理 |
 | **Unit — readPortFromStdout** | 正常 JSON 行、混合 stdout 内容、EOF 无 JSON、超时 fallback |
-| **Integration** | Swift 启动 go-grip 子进程 → 读取端口 → HTTP 请求验证服务可用 |
+| **Integration** | Swift 启动 md-grip 子进程 → 读取端口 → HTTP 请求验证服务可用 |
 | **UI — 拖拽** | 拖入显示蒙版、释放执行打开、拖离蒙版消失、非 .md 文件拒绝 |
 | **UI — 历史** | 添加/删除/清空/去重/排序 |
 | **Edge case** | 路径含空格/Unicode/符号链接、端口全占满（100 个实例）、App 退出时子进程清理 |
@@ -998,9 +998,9 @@ Popover 中的 ⚙️ 按钮可弹出设置面板，包含"开机自启"开关�
 2. **Xcode 项目**: 需用 Xcode GUI 创建 `.xcodeproj`，按第十三节配置 deployment target 等关键设置
 3. **macOS 版本**: 最低支持 macOS 13（SMAppService 开机自启需要）。NSPopover 支持 10.7+，无兼容性问题
 4. **子进程残留**: App 崩溃时子进程可能残留。V2 可加 PID 文件清理机制
-5. **内存占用**: 每个 go-grip 运行一个 HTTP server + fsnotify watcher，约占 20-30MB
-6. **go-grip `--json` stdout 协议**: 启用 `--json` 时，状态消息走 stderr，stdout 仅输出一行 JSON。Swift 逐行读取直到找到 JSON 对象
+5. **内存占用**: 每个 md-grip 运行一个 HTTP server + fsnotify watcher，约占 20-30MB
+6. **md-grip `--json` stdout 协议**: 启用 `--json` 时，状态消息走 stderr，stdout 仅输出一行 JSON。Swift 逐行读取直到找到 JSON 对象
 7. **拖拽 dismiss 冲突**: 需在拖拽期间将 NSPopover behavior 从 `.transient` 切换为 `.applicationDefined`，释放后恢复
-8. **`--browser=true` 语义**: go-grip 首次启动时自动打开浏览器（`--browser=true`），Swift 的 `open http://localhost:{port}` 仅用于激活已有 tab（点击已运行条目时）
+8. **`--browser=true` 语义**: md-grip 首次启动时自动打开浏览器（`--browser=true`），Swift 的 `open http://localhost:{port}` 仅用于激活已有 tab（点击已运行条目时）
 9. **路径规范化**: 拖拽接收的路径需做 `URL.path` 标准化（解析符号链接、处理空格和 Unicode），再检查扩展名和 isDirectory
 10. **CI Go 版本同步**: 现有 `release.yml` 的 `go-version: "1.25.x"` 需同步更新为 `"1.26"`（`go.mod` 已声明 1.26）

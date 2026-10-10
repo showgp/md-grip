@@ -20,7 +20,7 @@
 ## 目录结构总览
 
 ```
-go-grip/
+md-grip/
 ├── defaults/
 │   ├── templates/
 │   │   └── layout.html                # ← 修改 (~8 行变更)
@@ -144,7 +144,7 @@ div.container                                              (:84)
      :63 <script src="/static/js/editor.js" defer></script>
      ```
 
-  4. **标记为第三方文件**: `marked.min.js` 是 marked 官方发布产物，不做 go-grip 特定修改。文件头部保留原始注释。如需定制解析行为，在 `editor.js` 中通过 `marked.use()` 扩展 API 实现（当前版本无需定制）。
+  4. **标记为第三方文件**: `marked.min.js` 是 marked 官方发布产物，不做 md-grip 特定修改。文件头部保留原始注释。如需定制解析行为，在 `editor.js` 中通过 `marked.use()` 扩展 API 实现（当前版本无需定制）。
 
   5. **全局符号**: marked 在 `marked.min.js` 中注册全局 `marked.parse(markdownString)` 函数。`editor.js` 通过 `defer` 保证在 `marked` 可用之后执行。
 
@@ -665,7 +665,7 @@ div.container                                              (:84)
         a. 移除 body "editor-resizing" class
         b. 移除 handle "dragging" class
         c. 注销 mousemove/mouseup 监听器
-        d. 将比例写入 sessionStorage("go-grip-split-ratio")
+        d. 将比例写入 sessionStorage("md-grip-split-ratio")
      ```
 
 4. **响应式约束**:
@@ -675,7 +675,7 @@ div.container                                              (:84)
    5. **边界场景处理**:
       - 拖拽中浏览器窗口失焦（`window blur`）：触发 `mouseup` 清理逻辑，移除 `editor-resizing` / `dragging` class，注销监听器
       - 拖拽中按 `Esc` 键：同上清理逻辑
-      - `sessionStorage` 比例恢复：`enterEditMode()` 初始化时读取 `sessionStorage("go-grip-split-ratio")`，若有值则应用到 textarea/preview 的 flex 比例；预览面板从 `no-preview` 状态展开时也恢复先前比例
+      - `sessionStorage` 比例恢复：`enterEditMode()` 初始化时读取 `sessionStorage("md-grip-split-ratio")`，若有值则应用到 textarea/preview 的 flex 比例；预览面板从 `no-preview` 状态展开时也恢复先前比例
 
 ---
 
@@ -716,7 +716,7 @@ div.container                                              (:84)
          preview.innerHTML = marked.parse(textarea.value);
      }
      ```
-     文案 "Preview will appear here..." 使用英文（go-grip 项目语言为英文，Review 问题 10）。
+     文案 "Preview will appear here..." 使用英文（md-grip 项目语言为英文，Review 问题 10）。
 
   2. **CSS**: 占位文本样式：
      ```css

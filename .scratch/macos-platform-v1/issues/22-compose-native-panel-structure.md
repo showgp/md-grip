@@ -7,7 +7,7 @@
 **Status:** ready-for-agent
 
 - [ ] The hierarchy is header, optional error banner, Preview Sessions, Recent Targets, and primary Open action.
-- [ ] The header contains GoGrip product identity, the active Preview Session count, and direct access to Settings.
+- [ ] The header contains MDGrip product identity, the active Preview Session count, and direct access to Settings.
 - [ ] Width remains approximately 360 points and height grows with content to approximately 520 points.
 - [ ] Content beyond the maximum height scrolls internally while the header and primary action remain predictably reachable.
 - [ ] System typography, spacing, materials, controls, and SF Symbols are used consistently.

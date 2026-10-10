@@ -1,6 +1,6 @@
 package main
 
-import "github.com/showgp/go-grip/cmd"
+import "github.com/showgp/md-grip/cmd"
 
 func main() {
 	cmd.Execute()

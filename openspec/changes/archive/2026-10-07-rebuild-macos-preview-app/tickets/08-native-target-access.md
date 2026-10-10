@@ -41,7 +41,7 @@ Proposal source: ../proposal.md
 
 发布时 05/06 已有 `PreviewAppModel.openBatch`、`PreviewSessionCoordinator.prepareBatch/open(prepared:)`、`TargetPreparation`、`FoundationManagedProcessFactory` 与原生报告/会话控制。07 正在将 Finder provider 注册在生产根依赖就绪之后；目前存在相关源码不代表冷启动/权限验收已完成。实施 08 前重新读 **实际完成的 07**、其确切运行包及验证记录，不覆盖正在修改的 07、不锁定未来内部 API。
 
-- **唯一实际路径**：使用已完成 07 的 Finder Services 和现有 NSOpenPanel，进入同一 `openBatch`/协调器与 `Contents/MacOS/go-grip`。保留 bundle ID、正常父子启动及非沙盒路线，不用 Terminal、独立 CLI、临时 Foundation 拥有者或直接 selector 调用替代 native 授权证明；这些仅可作为明确标注的辅助诊断。
+- **唯一实际路径**：使用已完成 07 的 Finder Services 和现有 NSOpenPanel，进入同一 `openBatch`/协调器与 `Contents/MacOS/md-grip`。保留 bundle ID、正常父子启动及非沙盒路线，不用 Terminal、独立 CLI、临时 Foundation 拥有者或直接 selector 调用替代 native 授权证明；这些仅可作为明确标注的辅助诊断。
 - **最小访问与适用指导**：普通允许访问的目录/文件直接打开；失败仍保存所选目标、实际可获得原因及适用检查方式。区分可观察的文件/目录权限、卷挂载/共享权限和系统 Files and Folders 等授权情况；无法确知原因时保留真实诊断并给条件式检查指导，不能把所有 EPERM/EACCES、缺失路径或卷故障都断言为 TCC，也不能把所有失败统一导向 FDA。不新增自动设置权限、申请整盘访问、权限诊断数据库或配置界面；简短原生提示/既有报告及 README 指导足以满足时不另建服务。
 - **两阶段访问事实**：后台元数据准备可能先拒绝，也可能允许准备后由 Go 在实际读取时失败；二者都纳入同一失败报告，不用元数据成功保证后续可读。允许目标的实际 HTTP/浏览器内容才是成功证据，NSWorkspace true、进程已创建或空正文不是证明。真实可访问空目录成功与不可访问目录失败须有对照。
 - **保留既有状态与恢复边界**：启动失败不保留假 running/URL 或本次未收尾 child；运行中的 Go/目标不可访问仍按真实 phase、target/reload 状态及既有错误表面处理，不仅删行、不自动重启/重连/移动跟踪。用户改变访问许可后可主动重开原路径；仍在运行的服务按既有复用规则处理，不另建授权重试循环，不承诺原 watcher 自动恢复。完整面板布局/状态展示留给 09，不能据此省掉本票访问错误和指导。
@@ -84,7 +84,7 @@ Proposal source: ../proposal.md
 ## Acceptance
 
 - [x] 实施前核对07整票完成/实际native验证及独立审阅，另行批准08范围、最小scoped verification/TDD seam、专用目标/权限与卷操作许可及实施；本轮发布不提前编码/测试或解除真实前置。
-- [x] Finder及手动入口沿用07同一生产批次/协调器/正常父子launch与Contents/MacOS/go-grip，普通允许目标无需FDA/辅助功能/自动化，元数据与真实读取不阻塞主线程，不新增第二套身份/权限运行模型或PATH/源码/Terminal替代路径。
+- [x] Finder及手动入口沿用07同一生产批次/协调器/正常父子launch与Contents/MacOS/md-grip，普通允许目标无需FDA/辅助功能/自动化，元数据与真实读取不阻塞主线程，不新增第二套身份/权限运行模型或PATH/源码/Terminal替代路径。
 - [x] 实际native→Go观察受保护目录允许与拒绝，记录确切App/工具/目标/许可状态及系统实际授权主体；允许后正确浏览器内容，拒绝后明确目标、可获得原因与适用检查指导；签名、父子关系、chmod或mock不能替代TCC/native证据，未知主体不记为通过。
 - [x] 真实外接卷的目录/Markdown在系统允许范围内可从native路径读取正确内容，不因主目录之外或卷类型统一拒绝；记录实际挂载权限与观察到的不可访问指导，不用系统卷临时目录或别名冒充实际卷环境。已挂载网络卷的实际访问/降级证据经批准延期至后续 change（见 [tasks.md](../tasks.md) 延期清单），不属本票关闭条件。
 - [x] 原生访问失败报告与实际事实一致，包含所选目标/可获得原因/适用指导，不把所有失败猜成TCC或统一要求FDA；准备阶段与Go真实读取失败均走共享反馈，其他成功会话继续可管理，真正空目录成功与拒绝/不可访问失败有实际对照，无假running/默认端口fallback/本次遗留child。
@@ -107,19 +107,19 @@ Proposal source: ../proposal.md
 
 **执行与结果（Rounds A–F，逐轮 PASS）**：
 - **A 普通目标冷启动**：Finder 冷启动宿主 48759（PPID=1/Finder，UIElement），一个 Finder 调用产生三个 owned child——真实空目录（56360，“No Markdown” 空状态）、递归目录（56369，含 ordinary markers）、中文/空格 `.MD` 单文件（56374，单文件模式）；全部仅 `127.0.0.1:<随机>`，无 6419/默认端口 fallback。
-- **B 受保护目录拒绝→允许→重开**：tccd 授权主体＝app bundle `com.showgp.GoGrip`（pid 48759）；拒绝 Create 记录 17:25:09（Bundle ID）；包内工具访问经 responsible/app 主体评估（accessing `com.showgp.GoGrip.go-grip` pid 49036）；拒绝后无遗留 child/监听；System Settings 允许后（Modify 17:26:38）新 child 49155 → 56629 正确内容。
+- **B 受保护目录拒绝→允许→重开**：tccd 授权主体＝app bundle `com.showgp.MDGrip`（pid 48759）；拒绝 Create 记录 17:25:09（Bundle ID）；包内工具访问经 responsible/app 主体评估（accessing `com.showgp.MDGrip.md-grip` pid 49036）；拒绝后无遗留 child/监听；System Settings 允许后（Modify 17:26:38）新 child 49155 → 56629 正确内容。
 - **C 外接卷**：提示主体＝app bundle；允许后（Create 17:50:56）child 49744 → 57392，真实外接 USB/APFS 卷内容正确，不因卷类型统一拒绝。
-- **D 不可访问**：改名/删除 + 一次性磁盘镜像（`/Volumes/GoGrip08Test`）断卷；三个受影响会话显示访问错误而非空目录，真实空目录仍为空状态，面板保留会话与 Stop；无自动迁移/重启/重连。
+- **D 不可访问**：改名/删除 + 一次性磁盘镜像（`/Volumes/MDGrip08Test`）断卷；三个受影响会话显示访问错误而非空目录，真实空目录仍为空状态，面板保留会话与 Stop；无自动迁移/重启/重连。
 - **E 停止/退出隔离**：单停仅释放对应 child 50782/端口 57959；Quit 释放宿主与全部五个 owned child（端口 56360/56369/56374/56629/57392 全关）；独立 CLI（pid 51060，`*:6419`）全程 200，不受面板/停止范围影响。
 - **F 新构建复验**：ad-hoc 重建改变 CDHash（`02d35053…`→`5db6f61d…`）并重新请求 Documents/RemovableVolumes 授权（身份限制如实记录）；逐字拒绝报告含目标＋可获得原因＋条件式授权检查路径（System Settings → Privacy & Security → Files and Folders）；允许后重开成功；外接卷类同。
 - **指导修复（经批准的最小 seam）**：red 81/2（两个断言失败）→ `PreviewSessionCoordinator.swift` 追加条件式检查句 → green 81/0；`make macos` Release `BUILD SUCCEEDED`；`codesign --verify --deep --strict` OK。基线 80/0。
 
 **独立审阅**：2026-10-05 Standards/Spec 各 0 阻塞（各 1 P2 建议 → README 修正后增量复核 0/0）；2026-10-07 独立两轴复审（`ReviewStandards08R2`/`ReviewSpec08R2`）：各 **0 阻塞、0 建议、0 待裁决**；覆盖限制如实披露（无 08 单独 git 固定点、未重跑实施者检查、网络卷延期不作为阻塞）。未发现未溯源行为或测试。
 
-**证据持久化（2026-10-07）**：`/tmp/gogrip-08/EVIDENCE-LOG.md`（2026-10-05 18:53；sha256 `b1f743750e32379db15ac33b369bec70b26799a423659786b9a91c723ee3703d`）已**逐字复制**至 `~/GoGrip-acceptance-13/state-08/EVIDENCE-LOG.md`（sha256 一致）；来源/时间/边界见 `state-08/PROVENANCE.txt`。原始内容、当时构建身份与当时范围保留，未改写；原日志文本中“网络卷未验证、3.3 不能按该证据关闭”为当时记录，按 2026-10-06 批准的范围调整，网络卷延期后不阻塞本票与 3.3 关闭。
+**证据持久化（2026-10-07）**：`/tmp/mdgrip-08/EVIDENCE-LOG.md`（2026-10-05 18:53；sha256 `b1f743750e32379db15ac33b369bec70b26799a423659786b9a91c723ee3703d`）已**逐字复制**至 `~/MDGrip-acceptance-13/state-08/EVIDENCE-LOG.md`（sha256 一致）；来源/时间/边界见 `state-08/PROVENANCE.txt`。原始内容、当时构建身份与当时范围保留，未改写；原日志文本中“网络卷未验证、3.3 不能按该证据关闭”为当时记录，按 2026-10-06 批准的范围调整，网络卷延期后不阻塞本票与 3.3 关闭。
 
 **关闭边界**：已挂载网络卷维度保持**未验证**（延期至后续 change）；本记录不表述候选级/正式分发已验收。
 
 ## Closure record — 2026-10-07
 
-按调整后范围关闭本票：开发构建轮次 A–F 证据已持久化（`~/GoGrip-acceptance-13/state-08/EVIDENCE-LOG.md` 逐字副本＋`PROVENANCE.txt`，sha256 一致）；独立两轴审阅通过（2026-10-05 首轮 + 2026-10-07 复审 `ReviewStandards08R2`/`ReviewSpec08R2`：各 0 阻塞/0 建议/0 待裁决）。已挂载网络卷维度保持**未验证**（延期至后续 change）；审阅限制（无本票单独 git 固定点、未重跑实施者检查、网络卷未观察）如实保留于执行记录与两轴报告。本票 `Status: done`；Acceptance 按调整后文本全部勾选；tasks **3.3** 已勾。候选级验收由 13 承担；本关闭不表示正式分发（Developer ID/公证/干净安装/公开发布）或主规格同步/归档已获许可。
+按调整后范围关闭本票：开发构建轮次 A–F 证据已持久化（`~/MDGrip-acceptance-13/state-08/EVIDENCE-LOG.md` 逐字副本＋`PROVENANCE.txt`，sha256 一致）；独立两轴审阅通过（2026-10-05 首轮 + 2026-10-07 复审 `ReviewStandards08R2`/`ReviewSpec08R2`：各 0 阻塞/0 建议/0 待裁决）。已挂载网络卷维度保持**未验证**（延期至后续 change）；审阅限制（无本票单独 git 固定点、未重跑实施者检查、网络卷未观察）如实保留于执行记录与两轴报告。本票 `Status: done`；Acceptance 按调整后文本全部勾选；tasks **3.3** 已勾。候选级验收由 13 承担；本关闭不表示正式分发（Developer ID/公证/干净安装/公开发布）或主规格同步/归档已获许可。

@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/showgp/go-grip/internal/hotreload"
+	"github.com/showgp/md-grip/internal/hotreload"
 )
 
 const (
@@ -21,11 +21,11 @@ const (
 
 	// managedReadyPath is the startup confirmation route. It answers from the
 	// managed path only and never touches the target or renders markdown.
-	managedReadyPath = "/__gogrip/ready"
+	managedReadyPath = "/__mdgrip/ready"
 
 	// managedGenerationHeader carries the startup generation on the readiness
 	// response.
-	managedGenerationHeader = "X-GoGrip-Generation"
+	managedGenerationHeader = "X-MDGrip-Generation"
 
 	// managedCleanupDeadline bounds the graceful aftermath after owner loss.
 	// An independent watchdog force-exits the process beyond it, so a blocked

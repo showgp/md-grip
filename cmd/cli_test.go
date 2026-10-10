@@ -78,7 +78,7 @@ func TestStandaloneRecursiveDirectoryPreview(t *testing.T) {
 	writeProcessDoc(t, filepath.Join(root, "README.md"), "# Root CLI marker\n")
 	writeProcessDoc(t, filepath.Join(root, "nested", "note.md"), "# Nested CLI marker\n")
 
-	child := startGoGrip(t, "--json", "--browser=false", "-r", "--port", "0", "--", root)
+	child := startMDGrip(t, "--json", "--browser=false", "-r", "--port", "0", "--", root)
 	info := parseStandaloneInfo(t, child.nextLine(t, 10*time.Second))
 	base := fmt.Sprintf("http://%s:%d", info.Host, info.Port)
 
@@ -118,7 +118,7 @@ func TestStandaloneSingleFilePreviewWithSpacesAndNonASCII(t *testing.T) {
 	writeProcessDoc(t, doc, "# 独立单文件标记\n")
 	writeProcessDoc(t, filepath.Join(dir, "other.md"), "# 其他文章标记\n")
 
-	child := startGoGrip(t, "--json", "--browser=false", "--port", "0", "--", doc)
+	child := startMDGrip(t, "--json", "--browser=false", "--port", "0", "--", doc)
 	info := parseStandaloneInfo(t, child.nextLine(t, 10*time.Second))
 
 	parsed, err := url.Parse(info.URL)
@@ -158,7 +158,7 @@ func TestStandaloneDefaultPortFallback(t *testing.T) {
 	root := t.TempDir()
 	writeProcessDoc(t, filepath.Join(root, "README.md"), "# Fallback marker\n")
 
-	child := startGoGrip(t, "--json", "--browser=false", "--", root)
+	child := startMDGrip(t, "--json", "--browser=false", "--", root)
 	info := parseStandaloneInfo(t, child.nextLine(t, 10*time.Second))
 
 	if holdErr == nil && info.Port == 6419 {
@@ -185,7 +185,7 @@ func TestStandaloneExplicitPortConflictIsStrict(t *testing.T) {
 	root := t.TempDir()
 	writeProcessDoc(t, filepath.Join(root, "README.md"), "# Conflict marker\n")
 
-	child := startGoGrip(t, "--json", "--browser=false", "--port", strconv.Itoa(port), "--", root)
+	child := startMDGrip(t, "--json", "--browser=false", "--port", strconv.Itoa(port), "--", root)
 	if code := child.wait(t, 10*time.Second); code == 0 {
 		t.Fatalf("explicit port conflict exited with success (stderr: %s)", child.stderr.String())
 	}

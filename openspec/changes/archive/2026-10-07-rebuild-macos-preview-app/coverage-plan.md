@@ -131,7 +131,7 @@
 | No automatic session restoration or restart | `Relaunch with recent targets`；`A preview process exits unexpectedly` | 04/05、09、11、12（升级/回退说明）done；13 open：新候选实测意外退出无自动重启、Recent 主动重开可行、清史后重启不恢复（见票 13）；14 不新增恢复、重连或重启 |
 | Unavailable paths are not empty directories | `A target is moved or deleted`；`A mounted volume becomes unavailable` | 02/04、09、10 历史 done；08 open（候选级可卸载卷断卷验收延期；其他本阶段访问及不可用反馈要求保留）；14 done，保持根/所选单文件访问失败，不因子树权限拒绝污染可读根；12（2026-10-06 新候选：可读根含不可读子树时 0 个 unavailable 报告）done；13 open：新候选删除目标实测面板 unavailable + 保留 Stop、HTTP 404 不重连（见票 13）；移动为本机待验（最终候选） |
 | Visible hot-reload degradation | `Watch coverage is incomplete`；`Use a network-volume preview` | 02/04、09、10 历史 done；08 open（网络卷维度延期）；14 done，复用 walk error 状态并保留可读服务/手动刷新，不只补标签；12（2026-10-06 新候选面板显示 `Hot reload degraded: walk error …`、包内 renderer `reload-status degraded` 带原因）done；13 open：新候选面板实测降级显示且可读内容继续可用（见票 13）；网络卷维度（`Use a network-volume preview`）延期（未验证、不阻塞） |
-| Independent CLI operation remains available | `Launch the renderer without the application` | 01/02/03/04/05、09、12（CLI release/回退隔离）done；08 open（网络卷维度延期；外接卷访问、owned 收尾及独立 CLI 隔离仍按调整后 Acceptance 核对）；14 done，受影响共享发现的 CLI 兼容与隔离复验；13 open：新候选验收期间独立 CLI（`/Users/ray/go/bin/go-grip`，7801）在单停/Stop All/宿主强杀/Quit 前后持续 200（见票 13） |
+| Independent CLI operation remains available | `Launch the renderer without the application` | 01/02/03/04/05、09、12（CLI release/回退隔离）done；08 open（网络卷维度延期；外接卷访问、owned 收尾及独立 CLI 隔离仍按调整后 Acceptance 核对）；14 done，受影响共享发现的 CLI 兼容与隔离复验；13 open：新候选验收期间独立 CLI（`/Users/ray/go/bin/md-grip`，7801）在单停/Stop All/宿主强杀/Quit 前后持续 200（见票 13） |
 
 ### macos-menu-bar-app
 

@@ -2,7 +2,7 @@
 
 **What to build:** Establish the localization resource system and complete the English language for product identity, Finder Command, menu bar shell, onboarding, and panel structure.
 
-**Blocked by:** 10 — Remove Finder Sync from the product; 15 — Add menu bar commands and quit semantics; 18 — Add first-run and Finder Command guidance; 20 — Create the GoGrip menu bar template icon; 21 — Show session count and unread error state; 23 — Integrate panel states and drag presentation.
+**Blocked by:** 10 — Remove Finder Sync from the product; 15 — Add menu bar commands and quit semantics; 18 — Add first-run and Finder Command guidance; 20 — Create the MDGrip menu bar template icon; 21 — Show session count and unread error state; 23 — Integrate panel states and drag presentation.
 
 **Status:** ready-for-agent
 

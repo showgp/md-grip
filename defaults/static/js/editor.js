@@ -512,11 +512,11 @@
 			var key = summary ? summary.textContent : "section-" + i;
 			state[key] = d.hasAttribute("open");
 		});
-		sessionStorage.setItem("go-grip-sidebar-state", JSON.stringify(state));
+		sessionStorage.setItem("md-grip-sidebar-state", JSON.stringify(state));
 	}
 
 	function restoreSidebarState() {
-		var saved = sessionStorage.getItem("go-grip-sidebar-state");
+		var saved = sessionStorage.getItem("md-grip-sidebar-state");
 		if (!saved) return;
 		try {
 			var state = JSON.parse(saved);
@@ -532,7 +532,7 @@
 	}
 
 	function restoreScrollPosition() {
-		var saved = sessionStorage.getItem("go-grip-scrollTop");
+		var saved = sessionStorage.getItem("md-grip-scrollTop");
 		if (saved) {
 			var top = parseInt(saved, 10);
 			if (!isNaN(top) && top > 0) {
@@ -540,7 +540,7 @@
 					document.documentElement.scrollTop = top;
 				}, 100);
 			}
-			sessionStorage.removeItem("go-grip-scrollTop");
+			sessionStorage.removeItem("md-grip-scrollTop");
 		}
 	}
 

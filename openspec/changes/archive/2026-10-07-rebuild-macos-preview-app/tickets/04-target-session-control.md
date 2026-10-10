@@ -44,8 +44,8 @@ Proposal source: ../proposal.md
 
 | 当前表面 | 本票交付与切换边界 |
 |---|---|
-| `macos/GoGrip/Services/ManagedProcess.swift`：一次 launch/一个 owned child；`start()`、`stop()`、带 generation 的 `ManagedEvent` 与真实结果 | 作为唯一生产进程 seam；协调器每次实际新启动分配 generation，拥有适配器并消费结果/事件。单飞、同目标复用和会话字典在协调器，不下放到适配器、不另写 Process launch。 |
-| `macos/GoGrip/Services/ManagedProtocol.swift`：结构化 reload/target 快照 | 沿用 02/03 已确认形状与状态，包括已有 disabled 快照；不以 stderr/空内容推断目标可访问性或热重载覆盖，不重新要求宿主校验 ready 前 runtime 事件顺序。 |
+| `macos/MDGrip/Services/ManagedProcess.swift`：一次 launch/一个 owned child；`start()`、`stop()`、带 generation 的 `ManagedEvent` 与真实结果 | 作为唯一生产进程 seam；协调器每次实际新启动分配 generation，拥有适配器并消费结果/事件。单飞、同目标复用和会话字典在协调器，不下放到适配器、不另写 Process launch。 |
+| `macos/MDGrip/Services/ManagedProtocol.swift`：结构化 reload/target 快照 | 沿用 02/03 已确认形状与状态，包括已有 disabled 快照；不以 stderr/空内容推断目标可访问性或热重载覆盖，不重新要求宿主校验 ready 前 runtime 事件顺序。 |
 | 规范化和目标准备，目前无新协调器 | 在后台标准化绝对 file URL、解析符号链接并分类，保留所选展示路径；身份使用解析后的路径，不使用 inode/bookmark 跟踪移动，不笼统转换路径大小写。元数据失败返回目标及可获得原因，不创建假 running；Go 实际访问仍是最终判定，预检查不承诺后续访问成功。 |
 | 唯一主 actor 会话记录及异步回调 | 保留 target/mode、展示路径、generation、执行阶段、实际 URL、目标可访问性、reload 状态及可获得失败原因所需事实；使用 macOS 13 可用的 ObservableObject/Published。阻塞元数据、管道与 HTTP 不在主线程执行；入口/UI 不再建立自己的运行事实源。 |
 | 同目标 starting/running/stopping | starting 等待同次启动；running 返回已有已验证 URL；stopping 的重开等待旧 owned child 真实结束后才允许新 generation。不同父/子/文件目标独立；失败或停止不能使尚存活的旧服务与新代次重叠。 |
@@ -53,7 +53,7 @@ Proposal source: ../proposal.md
 | `ManagedProcess.stop()` 的 no-child 结果及真正 owned 退出 | 协调器保留 starting 的停止意图：可阻止尚未 launch 的启动，或在 child 已创建后通过同一适配器收尾；不能把 no-child 结果误认为清理完成而随后遗留服务。重复停止等待同一真实收尾，不重复创建服务；真实停止失败保留实际失败和管理事实，不以删行伪装退出。 |
 | target/reload 与执行阶段 | unavailable/degraded 与服务阶段分开；运行服务仍可查看、取得已有 URL和停止。意外退出结束 running 并保留可获得原因；显式停止不报意外退出，不自动重启、恢复 watcher、迁移路径或重连。 |
 | `ProcessManager.swift`、`AppDelegate.swift`、旧 Views/Storage/HistoryEntry | 本票不把旧 port/path API 包装成新协调器，不新增 aliases/shims；旧宿主调用方及旧管理器整体切换、移除在 05，旧历史切换在 07。04 临时宿主直接调用新生产协调器，不因旧 UI 未接通而要求先实施 05。 |
-| `macos/GoGrip.xcodeproj/project.pbxproj`、现有 GoGripTests 和 `Makefile` 的 `macos-test` | 将本票生产源码与批准 seam 的行为回归接入既有唯一工程/test target；复用真实 Go 测试工具入口及系统卷临时 bundle，不创建第二套工程、生产 PATH/Resources 回退或测试专用 Go flags。 |
+| `macos/MDGrip.xcodeproj/project.pbxproj`、现有 MDGripTests 和 `Makefile` 的 `macos-test` | 将本票生产源码与批准 seam 的行为回归接入既有唯一工程/test target；复用真实 Go 测试工具入口及系统卷临时 bundle，不创建第二套工程、生产 PATH/Resources 回退或测试专用 Go flags。 |
 | `docs/ARCHITECTURE.md` | 按实际证据更新规范化身份、事实源、代次/阶段、停止与正常/意外退出语义；说明临时协调器拥有者证明和仍未接通的原生/权限/候选边界。 |
 
 ### Proposed scoped TDD seams and real verification
@@ -96,7 +96,7 @@ Proposal source: ../proposal.md
 ## Closure record
 
 - 关闭：2026-10-04，状态 `done`；OpenSpec 任务 2.2 按实际证据勾选；2.4 结合已完成的 03 进程层证据勾选（03 交付 writer 关闭、真实退出与 4 秒确切 owned SIGKILL 兜底；本票交付协调器单个/全部、starting/重复停止、停止期间重开及正常/意外退出区分）。2.1、2.5 由 03 勾选，本票未重开或重勾；2.3 与任务 3–7 未触碰。
-- 变更面：新增 `macos/GoGrip/Services/PreviewSessionCoordinator.swift`（唯一主 actor 会话事实源：背景目标准备接入、单飞/复用、generation 隔离、单个/全部与 starting 停止、真实退出确认、故障与目标/reload 状态）、`TargetPreparation.swift`（标准化绝对路径、解析符号链接、按解析后实际类型分类与失败原因）、`ManagedProcessLaunching.swift`（生产适配器 seam 与 `FoundationManagedProcessFactory`）、`macos/GoGripTests/PreviewSessionCoordinatorTests.swift`（14 个受控生命周期回归）、`TargetPreparationTests.swift`（5 个身份回归）；`macos/GoGrip.xcodeproj/project.pbxproj`（3 个生产源进入 app + test target、2 个测试文件进入 GoGripTests）；`docs/ARCHITECTURE.md` 第七节新增“Swift 会话协调器（macOS 端）”并按证据更新日期与适配器停止条目。Go 侧零改动；`Makefile`、scheme、`.gitignore` 复用 03 的 `macos-test` 入口，未改。
+- 变更面：新增 `macos/MDGrip/Services/PreviewSessionCoordinator.swift`（唯一主 actor 会话事实源：背景目标准备接入、单飞/复用、generation 隔离、单个/全部与 starting 停止、真实退出确认、故障与目标/reload 状态）、`TargetPreparation.swift`（标准化绝对路径、解析符号链接、按解析后实际类型分类与失败原因）、`ManagedProcessLaunching.swift`（生产适配器 seam 与 `FoundationManagedProcessFactory`）、`macos/MDGripTests/PreviewSessionCoordinatorTests.swift`（14 个受控生命周期回归）、`TargetPreparationTests.swift`（5 个身份回归）；`macos/MDGrip.xcodeproj/project.pbxproj`（3 个生产源进入 app + test target、2 个测试文件进入 MDGripTests）；`docs/ARCHITECTURE.md` 第七节新增“Swift 会话协调器（macOS 端）”并按证据更新日期与适配器停止条目。Go 侧零改动；`Makefile`、scheme、`.gitignore` 复用 03 的 `macos-test` 入口，未改。
 - Scoped TDD 证据：S1 以缺少 `PreviewTarget`/`TargetPreparation` 的编译失败为 red，实现后 5 绿；S2 以缺少 `PreviewSession`/`OpenOutcome`/`ManagedProcessLaunching`/`ManagedProcessFactory` 的编译失败为 red，实现后 14 绿。绿过程由测试发现并修正两处实现缺陷：新记录默认 `.starting` 但无 launch 造成空转；已提交的成功启动未标记 child 已建立，使停止等待不会到来的 `.spawned` 事件。复用 03 的适配器行为/真实 Go 覆盖，未复制其解码/readiness/4 秒矩阵。
 - 自动检查：`make macos-test` **61 tests / 0 failures**（ManagedProtocolTests 17、ManagedProcessTests 16、ManagedDiagnosticsTailTests 2、ManagedProcessGoIntegrationTests 7、PreviewSessionCoordinatorTests 14、TargetPreparationTests 5）；unsigned Debug `xcodebuild build` **BUILD SUCCEEDED**，新文件无警告；Go 零改动，未重跑已知既存 `internal/server_test.go` errcheck、未宣称 lint 通过。
 - 真实 smoke（临时 Foundation 拥有者以生产源 + swiftc 编译，调用生产协调器 → 生产 `ManagedProcess` → 当前 Go；**54 项检查全过，exit 0**）：

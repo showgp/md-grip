@@ -1,7 +1,7 @@
 .PHONY: build test run macos macos-run macos-test macos-archive macos-dmg macos-candidate macos-candidate-check macos-clean
 
 build:
-	go build -o go-grip .
+	go build -o bin/md-grip .
 
 test:
 	go test ./...
@@ -10,24 +10,24 @@ run:
 	go run . $(ARGS)
 
 .PHONY: macos
-macos:  ## Build macOS App (GoGrip.app, ad-hoc signed development build)
-	xcodebuild -project macos/GoGrip.xcodeproj -scheme GoGrip \
+macos:  ## Build macOS App (MDGrip.app, ad-hoc signed development build)
+	xcodebuild -project macos/MDGrip.xcodeproj -scheme MDGrip \
 	  -configuration Release -derivedDataPath macos/.build/DerivedData build
 
 .PHONY: macos-run
 macos-run:  ## Build and run macOS App in Debug mode
-	xcodebuild -project macos/GoGrip.xcodeproj -scheme GoGrip \
+	xcodebuild -project macos/MDGrip.xcodeproj -scheme MDGrip \
 	  -configuration Debug -derivedDataPath macos/.build/DerivedData build
-	open macos/.build/DerivedData/Build/Products/Debug/GoGrip.app
+	open macos/.build/DerivedData/Build/Products/Debug/MDGrip.app
 
 .PHONY: macos-test
 macos-test:  ## Run macOS host adapter behavior tests (real Go, logic test bundle)
 	mkdir -p macos/.build/test
-	go build -o macos/.build/test/go-grip .
-	rm -rf /tmp/gogrip-managed-test-tool
-	mkdir -p /tmp/gogrip-managed-test-tool/GoGrip.app/Contents/MacOS
-	cp macos/.build/test/go-grip /tmp/gogrip-managed-test-tool/GoGrip.app/Contents/MacOS/go-grip
-	xcodebuild -project macos/GoGrip.xcodeproj -scheme GoGrip \
+	go build -o macos/.build/test/md-grip .
+	rm -rf /tmp/mdgrip-managed-test-tool
+	mkdir -p /tmp/mdgrip-managed-test-tool/MDGrip.app/Contents/MacOS
+	cp macos/.build/test/md-grip /tmp/mdgrip-managed-test-tool/MDGrip.app/Contents/MacOS/md-grip
+	xcodebuild -project macos/MDGrip.xcodeproj -scheme MDGrip \
 	  -configuration Debug -destination 'platform=macOS' \
 	  -derivedDataPath macos/.build/DerivedData test
 
@@ -38,10 +38,10 @@ CANDIDATE_DIR := $(CANDIDATE_BUILD)/candidate
 .PHONY: macos-archive
 macos-archive:  ## Archive the per-architecture candidate apps (Release, ad-hoc signed)
 	@set -e; for arch in $(CANDIDATE_ARCHS); do \
-	  echo "Archiving GoGrip-$$arch..."; \
-	  rm -rf "$(CANDIDATE_BUILD)/GoGrip-$$arch.xcarchive"; \
-	  xcodebuild -project macos/GoGrip.xcodeproj -scheme GoGrip \
-	    -configuration Release -archivePath "$(CANDIDATE_BUILD)/GoGrip-$$arch.xcarchive" \
+	  echo "Archiving MDGrip-$$arch..."; \
+	  rm -rf "$(CANDIDATE_BUILD)/MDGrip-$$arch.xcarchive"; \
+	  xcodebuild -project macos/MDGrip.xcodeproj -scheme MDGrip \
+	    -configuration Release -archivePath "$(CANDIDATE_BUILD)/MDGrip-$$arch.xcarchive" \
 	    ARCHS="$$arch" archive; \
 	done
 
@@ -49,13 +49,13 @@ macos-archive:  ## Archive the per-architecture candidate apps (Release, ad-hoc 
 macos-dmg: macos-archive  ## Build the per-architecture candidate DMGs (with /Applications entry)
 	@set -e; rm -rf "$(CANDIDATE_DIR)"; mkdir -p "$(CANDIDATE_DIR)"; \
 	for arch in $(CANDIDATE_ARCHS); do \
-	  app="$(CANDIDATE_BUILD)/GoGrip-$$arch.xcarchive/Products/Applications/GoGrip.app"; \
+	  app="$(CANDIDATE_BUILD)/MDGrip-$$arch.xcarchive/Products/Applications/MDGrip.app"; \
 	  root="$(CANDIDATE_BUILD)/dmg-root-$$arch"; \
 	  rm -rf "$$root"; \
 	  mkdir -p "$$root"; \
-	  ditto "$$app" "$$root/GoGrip.app"; \
+	  ditto "$$app" "$$root/MDGrip.app"; \
 	  ln -sfn /Applications "$$root/Applications"; \
-	  hdiutil create -volname "GoGrip" -srcfolder "$$root" -ov -format UDZO "$(CANDIDATE_DIR)/GoGrip-$$arch.dmg"; \
+	  hdiutil create -volname "MDGrip" -srcfolder "$$root" -ov -format UDZO "$(CANDIDATE_DIR)/MDGrip-$$arch.dmg"; \
 	  rm -rf "$$root"; \
 	done
 
@@ -67,15 +67,15 @@ macos-candidate: macos-dmg  ## Build both candidate DMGs, then verify signatures
 macos-candidate-check:  ## Verify the archived candidates: ad-hoc signatures, identifiers, per-architecture binaries
 	@set -e; for arch in $(CANDIDATE_ARCHS); do \
 	  case "$$arch" in arm64) other=x86_64 ;; x86_64) other=arm64 ;; *) echo "unsupported candidate arch: $$arch"; exit 1 ;; esac; \
-	  app="$(CANDIDATE_BUILD)/GoGrip-$$arch.xcarchive/Products/Applications/GoGrip.app"; \
+	  app="$(CANDIDATE_BUILD)/MDGrip-$$arch.xcarchive/Products/Applications/MDGrip.app"; \
 	  test -d "$$app" || { echo "missing archived app: $$app"; exit 1; }; \
 	  codesign --verify --strict "$$app"; \
-	  codesign --verify --strict "$$app/Contents/MacOS/go-grip"; \
-	  codesign -dv "$$app" 2>&1 | grep -qx "Identifier=com.showgp.GoGrip"; \
-	  codesign -dv "$$app/Contents/MacOS/go-grip" 2>&1 | grep -qx "Identifier=com.showgp.GoGrip.go-grip"; \
+	  codesign --verify --strict "$$app/Contents/MacOS/md-grip"; \
+	  codesign -dv "$$app" 2>&1 | grep -qx "Identifier=com.showgp.MDGrip"; \
+	  codesign -dv "$$app/Contents/MacOS/md-grip" 2>&1 | grep -qx "Identifier=com.showgp.MDGrip.md-grip"; \
 	  codesign -dv "$$app" 2>&1 | grep -q "Signature=adhoc"; \
-	  codesign -dv "$$app/Contents/MacOS/go-grip" 2>&1 | grep -q "Signature=adhoc"; \
-	  for binary in "$$app/Contents/MacOS/GoGrip" "$$app/Contents/MacOS/go-grip"; do \
+	  codesign -dv "$$app/Contents/MacOS/md-grip" 2>&1 | grep -q "Signature=adhoc"; \
+	  for binary in "$$app/Contents/MacOS/MDGrip" "$$app/Contents/MacOS/md-grip"; do \
 	    lipo "$$binary" -verify_arch "$$arch" || { echo "missing $$arch: $$binary"; exit 1; }; \
 	    if lipo "$$binary" -verify_arch "$$other" 2>/dev/null; then \
 	      echo "unexpected $$other slice in $$binary (candidate must contain $$arch only)"; exit 1; \

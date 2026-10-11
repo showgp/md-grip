@@ -1,6 +1,7 @@
 vendor
 result
 bin
+/dist/
 macos/.build
 .codewhale
 .deepseek

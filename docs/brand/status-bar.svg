@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+<!-- MDGrip status bar glyph — direction A（叠窗）, 18 pt template variant.
+     Monochrome black + alpha for macOS template rendering; no text, no color.
+     Scene adaptation vs the 96-unit mark: window band omitted, solid window,
+     uniform 2 px transparent separation, breathing margin at the right edge.-->
+<path fill="#000000" d="M3,1 H9 V3 H11 V5 H6 V13 Q6,15 4,15 H3 Q1,15 1,13 V3 Q1,1 3,1 Z"/>
+<rect x="8" y="7" width="8" height="9" rx="2" fill="#000000"/>
+</svg>

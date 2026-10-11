@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+<!-- MDGrip favicon glyph — direction A（叠窗）, browser-tab adaptation.
+     Single-outline page (45° fold at top right) + landscape window with a thin
+     blue outline in front; uniform transparent separation, no backing plate.
+     Primary blue #3E6E9E confirmed in the change's refinement review. -->
+<path fill="#3E6E9E" d="M3,1 H8 L10,3 H5 V11 Q5,13 3,13 H3 Q1,13 1,11 V3 Q1,1 3,1 Z"/>
+<rect x="7" y="5.5" width="7" height="6.5" rx="2" fill="#E9F1F7" stroke="#3E6E9E" stroke-width="1"/>
+</svg>

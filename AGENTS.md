@@ -99,10 +99,13 @@ Domain documentation uses the single-context layout. See `docs/agents/domain.md`
 - In `tasks.md`, put each checkbox, complete task description, and verification
   criterion on one physical line; after writing or editing tasks, inspect
   `openspec instructions apply --json` output for counts and descriptions.
-- Publish tickets one per review cycle with `tasks-to-tickets`; implement one
-  approved ticket at a time with `implement-openspec-ticket` (scoped TDD at
-  seams agreed with the user; real checks; observed CLI smoke), then stop and
-  wait for permission. Reporting progress is not permission to continue.
+- Publish tickets covering the full approved `tasks.md` with `tasks-to-tickets`
+  as one complete batch, then stop for overall user review. Publication is not
+  permission to implement.
+- Implement one approved ticket at a time with `implement-openspec-ticket`
+  (scoped TDD at seams agreed with the user; real checks; observed CLI smoke),
+  then stop and wait for permission. Reporting progress is not permission to
+  continue.
 - `review-openspec-ticket` performs the independent Standards and Spec review
   before a ticket can close. A test's passing or a review's zero findings never
   promote unapproved behavior into the spec.

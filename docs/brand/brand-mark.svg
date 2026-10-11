@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+<!-- MDGrip brand mark — direction A（叠窗）: page dominant, preview window in front.
+     Single-outline page with fold step; window pales with a blue outline in front,
+     uniform transparent separation, no backing plate. Same core silhouette as
+     status-bar.svg / favicon.svg / app-icon.svg, simplified flat for README use.
+     Primary blue #3E6E9E confirmed in the change's refinement review. -->
+<path fill="#3E6E9E" d="M19,13 H43 V26 H56 V42.5 H39.5 V76 Q39.5,83 32.5,83 H19 Q12,83 12,76 V20 Q12,13 19,13 Z"/>
+<rect x="44" y="47" width="40" height="34" rx="7" fill="#E9F1F7" stroke="#3E6E9E" stroke-width="3"/>
+</svg>

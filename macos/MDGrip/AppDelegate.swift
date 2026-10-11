@@ -88,7 +88,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "doc.text", accessibilityDescription: "MDGrip")
+            // The menu bar identity is the compiled StatusBarIcon asset (the
+            // imageset declares template rendering and the 18 pt 1× slot):
+            // loaded once here — no per-click bitmap work, no theme
+            // listeners, no icon state machine and no symbol fallback.
+            let image = NSImage(named: "StatusBarIcon")
+            image?.accessibilityDescription = "MDGrip"
+            button.image = image
             button.target = self
             button.action = #selector(togglePopover(_:))
         }

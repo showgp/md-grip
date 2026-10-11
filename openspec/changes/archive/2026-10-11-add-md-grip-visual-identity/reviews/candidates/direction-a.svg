@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="704" viewBox="0 0 760 704">
+<!-- MDGrip candidate direction A: low-fidelity mock, review material only, NOT a final asset -->
+<defs>
+<g id="glyph96"><path fill="#3E6E9E" fill-rule="evenodd" d="M19,13 H43 L56,26 V76 Q56,83 49,83 H19 Q12,83 12,76 V20 Q12,13 19,13 Z M51.0,42.5 H77.0 A11.5,11.5 0 0 1 88.5,54.0 V74.0 A11.5,11.5 0 0 1 77.0,85.5 H51.0 A11.5,11.5 0 0 1 39.5,74.0 V54.0 A11.5,11.5 0 0 1 51.0,42.5 Z M43,13 L43,26 L56,26 Z"/><rect x="44" y="47" width="40" height="34" rx="7" fill="#E9F1F7" stroke="#3E6E9E" stroke-width="3"/></g>
+<g id="bar18"><path fill="currentColor" fill-rule="evenodd" d="M3,1 H9 L11,3 V13 Q11,15 9,15 H3 Q1,15 1,13 V3 Q1,1 3,1 Z M9.799999999999999,5.9 H14.199999999999998 A3.1,3.1 0 0 1 17.299999999999997,9.0 V14.200000000000001 A3.1,3.1 0 0 1 14.199999999999998,17.3 H9.799999999999999 A3.1,3.1 0 0 1 6.699999999999999,14.200000000000001 V9.0 A3.1,3.1 0 0 1 9.799999999999999,5.9 Z M9,1 L9,3 L11,3 Z"/><rect x="8.2" y="7.4" width="7.6" height="8.4" rx="1.6" fill="currentColor"/></g>
+</defs>
+<rect width="760" height="704" fill="#FFFFFF"/>
+<text x="36" y="46" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="21" fill="#1A1A1A" font-weight="600">Direction A — page-dominant, preview window in front</text>
+<text x="36" y="70" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" fill="#5A6672">Low-fidelity mock for candidate review · not a final asset · colors are placeholders</text>
+<line x1="36" y1="90" x2="724" y2="90" stroke="#D9DFE6" stroke-width="1"/>
+<text x="36" y="118" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" fill="#1A1A1A" font-weight="600">1 · Status bar — normal size (18 pt, template rendering)</text>
+<rect x="36" y="134" width="380" height="26" rx="5" fill="#F3F3F4"/><g color="#1A1A1A" transform="translate(46,138)"><use href="#bar18"/></g><text x="72" y="151.5" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" fill="#3A3A3C" font-weight="600">MDGrip</text><text x="136" y="151.5" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#3A3A3C">File&#160;&#160;Edit&#160;&#160;View&#160;&#160;Window&#160;&#160;Help</text>
+<rect x="36" y="168" width="380" height="26" rx="5" fill="#262626"/><g color="#FFFFFF" transform="translate(46,172)"><use href="#bar18"/></g><text x="72" y="185.5" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" fill="#ECECEF" font-weight="600">MDGrip</text><text x="136" y="185.5" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#ECECEF">File&#160;&#160;Edit&#160;&#160;View&#160;&#160;Window&#160;&#160;Help</text>
+<g color="#1A1A1A" transform="translate(470,132) scale(5)"><use href="#bar18"/></g>
+<text x="470" y="240" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" fill="#8A9097">18 pt variant enlarged ×5 (scene-adapted geometry)</text>
+<line x1="36" y1="262" x2="724" y2="262" stroke="#D9DFE6" stroke-width="1"/>
+<text x="36" y="290" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" fill="#1A1A1A" font-weight="600">2 · App icon — flat with slight depth (tile treatment placeholder)</text>
+<rect x="36" y="314" width="128" height="128" rx="28.2" fill="#F5F7FA" stroke="#D9DFE6" stroke-width="1"/><g transform="translate(60.32,338.32) scale(0.8266666666666667)"><use href="#glyph96"/></g>
+<rect x="188" y="314" width="48" height="48" rx="10.6" fill="#F5F7FA" stroke="#D9DFE6" stroke-width="1"/><g transform="translate(197.12,323.12) scale(0.31)"><use href="#glyph96"/></g>
+<rect x="252" y="314" width="32" height="32" rx="7.0" fill="#F5F7FA" stroke="#D9DFE6" stroke-width="1"/><g transform="translate(258.08,320.08) scale(0.20666666666666667)"><use href="#glyph96"/></g>
+<rect x="300" y="314" width="16" height="16" rx="3.5" fill="#F5F7FA" stroke="#D9DFE6" stroke-width="1"/><g transform="translate(303.04,317.04) scale(0.10333333333333333)"><use href="#glyph96"/></g>
+<rect x="368" y="314" width="232" height="128" rx="10" fill="#1E2024"/>
+<rect x="400" y="326" width="64" height="64" rx="14.1" fill="#F5F7FA" stroke="#D9DFE6" stroke-width="1"/><g transform="translate(412.16,338.16) scale(0.41333333333333333)"><use href="#glyph96"/></g>
+<rect x="500" y="342" width="32" height="32" rx="7.0" fill="#F5F7FA" stroke="#D9DFE6" stroke-width="1"/><g transform="translate(506.08,348.08) scale(0.20666666666666667)"><use href="#glyph96"/></g>
+<text x="76" y="460" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" fill="#8A9097" text-anchor="middle">128 pt</text>
+<text x="212" y="460" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" fill="#8A9097" text-anchor="middle">48</text>
+<text x="268" y="460" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" fill="#8A9097" text-anchor="middle">32</text>
+<text x="308" y="460" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" fill="#8A9097" text-anchor="middle">16</text>
+<text x="484" y="460" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" fill="#8A9097" text-anchor="middle">on dark background (Dock / Finder dark)</text>
+<line x1="36" y1="478" x2="724" y2="478" stroke="#D9DFE6" stroke-width="1"/>
+<text x="36" y="506" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" fill="#1A1A1A" font-weight="600">3 · Repository mark — simplified flat (transparent background)</text>
+<rect x="36" y="524" width="224" height="128" rx="8" fill="#FFFFFF" stroke="#D9DFE6" stroke-width="1"/><g transform="translate(64,540)"><use href="#glyph96"/></g><g transform="translate(216,544) scale(0.3333333333333333)"><use href="#glyph96"/></g>
+<rect x="292" y="524" width="224" height="128" rx="8" fill="#0D1117"/><g transform="translate(320,540)"><use href="#glyph96"/></g><g transform="translate(472,544) scale(0.3333333333333333)"><use href="#glyph96"/></g>
+<text x="76" y="668" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" fill="#8A9097">on light page bg — 96 px (README) + 32 px</text>
+<text x="332" y="668" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" fill="#8A9097">on dark page bg — 96 px + 32 px</text>
+<text x="548" y="548" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" fill="#5A6672">Final delivery: transparent PNG;</text>
+<text x="548" y="566" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" fill="#5A6672">96 px equals the README display width.</text>
+<text x="548" y="584" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" fill="#5A6672">Same core silhouette, scene-adapted</text>
+<text x="548" y="602" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" fill="#5A6672">stroke widths, spacing and detail.</text>
+</svg>

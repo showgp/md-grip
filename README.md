@@ -1,5 +1,7 @@
 # md-grip
 
+<img src="docs/brand/mdgrip.png" alt="MDGrip" width="96" />
+
 Render your local Markdown files with the look of GitHub — and, on macOS, through a native menu bar app with Finder integration.
 
 ## Table of Contents

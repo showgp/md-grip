@@ -45,6 +45,7 @@
 		10A1B2CA000000000000000B2 /* FirstUseGuidanceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A1B2CA000000000000000A1 /* FirstUseGuidanceStore.swift */; };
 		10A1B2CA000000000000000C1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 10A1B2CA000000000000000E1 /* Localizable.strings */; };
 		10A1B2CA000000000000000C2 /* ServicesMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = 10A1B2CA000000000000000E2 /* ServicesMenu.strings */; };
+		10A1B2CA000000000000000C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 10A1B2CA000000000000000E3 /* Assets.xcassets */; };
 		09A1B2C700000000000000B4 /* RecentTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A1B2C700000000000000A3 /* RecentTarget.swift */; };
 		09A1B2C700000000000000B5 /* RecentTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A1B2C700000000000000A3 /* RecentTarget.swift */; };
 /* End PBXBuildFile section */
@@ -83,6 +84,7 @@
 		10A1B2CA000000000000000F2 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		10A1B2CA000000000000000F3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/ServicesMenu.strings; sourceTree = "<group>"; };
 		10A1B2CA000000000000000F4 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ServicesMenu.strings"; sourceTree = "<group>"; };
+		10A1B2CA000000000000000E3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -151,6 +153,7 @@
 				05A1B2C400000000000000A2 /* PreviewAppModel.swift */,
 				07A1B2C600000000000000A1 /* FinderServiceProvider.swift */,
 				85895AC046F28E5D9BA1160B /* Info.plist */,
+				10A1B2CA000000000000000E3 /* Assets.xcassets */,
 				10A1B2CA000000000000000E1 /* Localizable.strings */,
 				10A1B2CA000000000000000E2 /* ServicesMenu.strings */,
 				321D6ACBC5CFD49DE7284B08 /* Models */,
@@ -257,6 +260,7 @@
 			files = (
 				10A1B2CA000000000000000C1 /* Localizable.strings in Resources */,
 				10A1B2CA000000000000000C2 /* ServicesMenu.strings in Resources */,
+				10A1B2CA000000000000000C3 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

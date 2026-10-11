@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<!-- MDGrip app icon — direction A（叠窗）on a blue rounded tile (user-confirmed option B).
+     Tile: macOS corner radius, blue base with a darker hairline edge; glyph is the
+     shared core silhouette as one group (pale page, white window window with blue
+     outline). Slight depth: one soft shadow under the front window only. -->
+<defs>
+  <filter id="winShadow" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="9"/>
+  </filter>
+</defs>
+<rect x="100" y="100" width="824" height="824" rx="185.4" fill="#3E6E9E" stroke="#2C5578" stroke-width="2"/>
+<g transform="translate(152,159.5) scale(7.5)">
+  <path fill="#E9F1F7" d="M19,13 H43 V26 H56 V42.5 H39.5 V76 Q39.5,83 32.5,83 H19 Q12,83 12,76 V20 Q12,13 19,13 Z"/>
+  <rect x="46" y="51" width="42" height="36" rx="7" fill="#0F2740" fill-opacity="0.25" filter="url(#winShadow)"/>
+  <rect x="44" y="47" width="40" height="34" rx="7" fill="#FFFFFF" stroke="#3E6E9E" stroke-width="3"/>
+</g>
+</svg>

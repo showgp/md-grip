@@ -18,7 +18,7 @@
 ## 3. Release 流水线
 
 - [x] 3.1 `.github/workflows/release.yml` 与 `build.yml` 产物名与路径替换：CLI 归档 `md-grip_<ver>_<os>_<arch>`、artifact `MDGrip-macos-candidate(-<ref>)`、DMG 路径 `MDGrip-<arch>.dmg`；验证：`actionlint`（如可用）或 `yamllint` 通过，path 文件名与 2.5 产物逐字一致
-- [ ] 3.2 `release.yml` 新增 Release 附挂步骤：`MDGrip-arm64.dmg` 与 `MDGrip-x86_64.dmg` 附挂到 GitHub Release，校验和文件重建为覆盖 CLI 归档与双 DMG 全部 assets，发布说明模板含 ad-hoc 签名/未公证声明（规格 `Releases publish per-architecture DMG assets`）；验证：workflow 审查通过，声明文案与 spec delta 场景一致（assets 实际形态由 v0.14.0 tag 发布时的运维步骤核对）
+- [x] 3.2 `release.yml` 新增 Release 附挂步骤：`MDGrip-arm64.dmg` 与 `MDGrip-x86_64.dmg` 附挂到 GitHub Release，校验和文件重建为覆盖 CLI 归档与双 DMG 全部 assets，发布说明模板含 ad-hoc 签名/未公证声明（规格 `Releases publish per-architecture DMG assets`）；验证：workflow 审查通过，声明文案与 spec delta 场景一致（assets 实际形态由 v0.14.0 tag 发布时的运维步骤核对）
 
 ## 4. 文档、许可与品牌文本
 

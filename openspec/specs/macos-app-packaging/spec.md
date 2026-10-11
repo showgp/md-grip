@@ -51,15 +51,19 @@
 
 ### Requirement: Explicitly deferred formal distribution
 
-本阶段 SHALL 交付完整功能及打包流程，但将 Developer ID 签名、公证、正式安装包验证及公开发布另行安排。候选产物和交付说明 SHALL 明确本阶段不代表正式发布就绪；未签名候选包的系统信任提示 SHALL 不被当作最终产品安装体验。正式分发的签名、公证与干净安装标准 SHALL 不因本阶段暂缓而被取消。
+本阶段 SHALL 交付完整功能及打包流程；Developer ID 签名、公证及正式安装包验证（含干净安装验证）SHALL 继续另行安排。通过 GitHub Release 公开发布 ad-hoc 签名的候选 DMG 属于本阶段交付范围；发布材料 SHALL 明确标注产物为 ad-hoc 签名、未经公证，SHALL NOT 将其表述为已完成公证或宣称普通用户安装信任流程已经验收。正式分发的签名、公证与干净安装标准 SHALL 不因公开发布候选产物而被取消。
 
 #### Scenario: Present an unsigned candidate for functional review
 - **WHEN** 本阶段提供尚未完成正式签名或公证的候选 App 或 DMG
 - **THEN** 交付说明标明候选阶段及未完成的正式分发验证，不宣称普通用户安装信任流程已经验收
 
+#### Scenario: Release candidate DMGs publicly
+- **WHEN** 通过 GitHub Release 公开发布候选 DMG
+- **THEN** 发布说明标注 ad-hoc 签名、未经公证及未完成的干净安装验证，不宣称普通用户安装信任流程已经验收
+
 #### Scenario: Complete this implementation stage
 - **WHEN** 完整功能及候选打包流程达到本阶段验收要求
-- **THEN** 本阶段可以交付功能验收结果，但不因此自动获得公开发布许可，也不把正式签名、公证和安装包验证标为已完成
+- **THEN** 本阶段可以交付功能验收结果，但不因此获得正式签名、公证或干净安装验证的完成状态
 
 ### Requirement: Explicitly deferred environment-dependent acceptance
 
@@ -97,8 +101,15 @@
 - **THEN** 校验失败,该包不作为候选交付
 
 ### Requirement: CI uploads split candidate artifacts
-CI release 工作流 SHALL 在候选打包时上传 `MDGrip-arm64.dmg` 与 `MDGrip-x86_64.dmg` 作为 workflow artifact,SHALL NOT 将其表述为正式发布或已完成公证的产物(沿用既有"候选仅 artifact、正式发布另行审批"边界)。
+CI release 工作流 SHALL 在候选打包时上传 `MDGrip-arm64.dmg` 与 `MDGrip-x86_64.dmg` 作为 workflow artifact;正式发布产物的交付边界由 `Releases publish per-architecture DMG assets` 要求定义。
 
 #### Scenario: Tag build produces candidate artifacts
 - **WHEN** CI 运行 release 工作流
 - **THEN** workflow artifact 包含 `MDGrip-arm64.dmg` 与 `MDGrip-x86_64.dmg`
+
+### Requirement: Releases publish per-architecture DMG assets
+GitHub Release SHALL 在 CLI 归档之外附挂 `MDGrip-arm64.dmg` 与 `MDGrip-x86_64.dmg`;校验和文件 SHALL 涵盖 CLI 归档与两个 DMG 在内的全部 Release assets。发布材料 SHALL 标注 DMG 为 ad-hoc 签名且未经公证，SHALL NOT 宣称已完成公证或普通用户安装信任流程已验收。同一 Release 内的 CLI 归档、校验和与 DMG SHALL 来自同一次构建且版本一致。
+
+#### Scenario: Tag build publishes release assets
+- **WHEN** tag 触发的 release 工作流完成
+- **THEN** 该 Release 的 assets 同时包含 CLI 归档、涵盖全部资产的校验和文件、`MDGrip-arm64.dmg` 与 `MDGrip-x86_64.dmg`，且发布说明包含未公证声明

@@ -17,7 +17,7 @@ CI/Release 工作流产物名与新名一致：CLI 归档 `md-grip_<version>_<os
 
 - [x] workflow lint 通过（actionlint/yamllint，如可用）
 - [x] 附挂步骤与 checksums 覆盖范围审查通过，声明文案与 spec delta 场景一致
-- [ ] assets 实际形态由 v0.14.0 发布时的运维步骤核对（本票交付工作流变更本身）
+- [x] assets 实际形态由 v0.14.0 发布时的运维步骤核对（本票交付工作流变更本身）
 
 ## Closure record
 
@@ -34,3 +34,15 @@ CI/Release 工作流产物名与新名一致：CLI 归档 `md-grip_<version>_<os
 - 覆盖限制/未观察:未执行 GitHub Actions 真跑(需 GitHub runner 与 tag);shellcheck 未安装;v0.14.0 实际 assets 形态未观察。
 - 账本核对:task 3.1 输出标准(actionlint 通过、path 与 2.5 产物逐字一致)已在集成态观察 → 勾选;task 3.2 的 workflow 审查与文案一致性已观察,但票面验收第 3 条/task 3.2 括注的"assets 实际形态由 v0.14.0 发布运维核对"在集成态不可观察 → **票面第 3 条与 task 3.2 均保持未勾选、不宣称**,作为 v0.14.0 发布时的运维步骤保留在覆盖计划中。`openspec instructions apply` 复核后 20 项 / 10 完成,与文件一致。
 - 未执行:提交、主规格同步、归档、下一票。
+
+## Release verification (2026-10-11)
+
+- 本节记录后续发布运维验收，不改写上述 2026-10-09 集成态记录。v0.14.0 的真实 Release 工作流 [38103124903](https://github.com/showgp/md-grip/actions/runs/38103124903) 成功，交付六个 CLI 归档、两个 DMG 和 `checksums.txt`；实下载后 payload 校验和 8/8、GitHub 资产大小及 SHA-256 摘要 9/9 匹配，六个归档的可执行文件名称、格式和架构正确，两个 DMG 的签名、标识符、架构及 `/Applications` 链接通过检查。
+- v0.14.0 版本元数据检查发现：首个 CLI 为 `v0.14.0`，后续五个为 `v0.14.0+dirty`，均指向 `42247b212ab336e48b8c335512f8141592691a85`。生成的 `dist/` 归档未被忽略，使后续构建标记工作树为 dirty。按批准决策，以最小修复 `.gitignore` 增加 `/dist/`，提交 `4e1f4ba812e928737f7faccf94d50f45d8ffe943`，发布 v0.14.1；v0.14.0 的 tag、Release ID、标题、说明和原有九个资产保持不变。
+- 修复冒烟：干净克隆中先构建 CLI，再向 `dist/` 写入真实归档后再次构建；两次二进制均无 `+dirty`、`vcs.modified=false` 且 revision 为修复提交，第二个二进制的 `--help` 正常。一次性克隆已清理，无新增永久测试。
+- [v0.14.1](https://github.com/showgp/md-grip/releases/tag/v0.14.1) 已公开发布并设为 latest；真实工作流 [38103664186](https://github.com/showgp/md-grip/actions/runs/38103664186) 的三个 job 均成功，Go 全套测试通过，Swift 95 tests / 0 failures，双架构 `macos-candidate-check` 通过。`cli-archives` 与 `MDGrip-macos-candidate-v0.14.1` artifacts 均来自该 run 和修复提交。
+- v0.14.1 实下载九个资产：`md-grip_v0.14.1_<darwin|linux|windows>_<amd64|arm64>.{tar.gz,zip}` 六个归档、`MDGrip-arm64.dmg`、`MDGrip-x86_64.dmg`、`checksums.txt`；文件清单精确匹配，manifest 的八个 payload SHA-256 全部匹配，GitHub 记录的九个资产大小及摘要全部匹配，归档中的 `md-grip` / `md-grip.exe` 格式及架构正确。
+- v0.14.1 两个 DMG 均只读挂载实查：包含 `MDGrip.app` 与指向 `/Applications` 的链接；宿主和内置工具严格 codesign 校验通过，签名均为 ad-hoc，标识符分别为 `com.showgp.MDGrip`、`com.showgp.MDGrip.md-grip`，各二进制只含分配架构，最低 macOS 为 13.0。六个 CLI 及两个内置 Go 工具的 module version 均为 `v0.14.1`，revision 均为修复提交且 `vcs.modified=false`。
+- 发布版 darwin/arm64 CLI 实运行：`--help` 显示 `md-grip [file]`，受管 readiness HEAD 返回 204 并携带匹配的 `X-MDGrip-Generation`，目录 Markdown 请求返回 200 且标题和加粗正文正确渲染，owner EOF 后正常退出。两个 DMG 均已卸载，一次性下载、解包和冒烟目录已清理，未保留资产备份。
+- 完整英文 release notes 已发布，含独立项目名称、上游来源、CLI 更名与安装命令、双 DMG 下载信息，以及 candidate / ad-hoc / not notarized / clean-install verification incomplete / trust flow not validated 声明。未宣称完成 Developer ID 签名、公证或正式安装信任验收。
+- 验收结论：票面第 3 条与 task 3.2 已由 v0.14.0 实际交付及批准的 v0.14.1 版本一致性补验满足。覆盖限制：未在 Linux、Windows、Intel Mac 或 macOS 13 真机执行下载的程序，未重复 App GUI / Finder 人工验收；干净安装与正式分发验证仍延期。CI 的旧 action Node.js 20 声明产生非阻塞 warning，未扩大到 action 升级范围；未同步主规格或归档。
